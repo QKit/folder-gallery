@@ -1,12 +1,12 @@
 /*******************************************************************************
 *                                                                              *
-*  Folder Gallery main source file.                                            *
+*  Logging settings item implementation.                                       *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
-*  This file is part of the Folder Gallery project.                            *
+*  This file is part of the QKit project.                                      *
 *                                                                              *
 *  $QT_BEGIN_LICENSE:GPL$                                                      *
 *  You may use this file under the terms of the GNU General Public License     *
@@ -24,41 +24,13 @@
 *                                                                              *
 *******************************************************************************/
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+import QtQuick 1.0
 
-#include <QtDeclarative>
-#include "mediafiles/MediaFile.h"
-#include "mediafiles/MediaDir.h"
-#include "mediafiles/MediaRoots.h"
-
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    QmlApplicationViewer viewer;
-
-    app.setApplicationName(app.trUtf8("Folder Gallery"));
-
-    qmlRegisterType<MediaFile>("MediaFile", 1, 0, "MediaFile");
-    qmlRegisterType<MediaDir>("MediaDir", 1, 0, "MediaDir");
-    qmlRegisterType<MediaRoots>("MediaRoots", 1, 0, "MediaRoots");
-
-#if defined(Q_WS_MAEMO_5)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_maemo_5.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_WS_HARMATTAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_harmattan.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_OS_SYMBIAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_symbian.qml"));
-    viewer.showFullScreen();
-#else
-//    (defined(Q_WS_WIN) || defined(Q_WS_X11))
-    viewer.setMainQmlFile(QLatin1String("qml/Main_desktop.qml"));
-    viewer.show();
-#endif
-//    viewer.showExpanded();
-    return app.exec();
+Item {
+    property bool createdLogging: false
+    property bool parentLogging: false
+    property bool activeLogging: false
+    property bool selectedLogging: false
+    property bool activeFocusLogging: false
+    property bool focusLogging: false
 }

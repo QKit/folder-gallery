@@ -1,12 +1,12 @@
 /*******************************************************************************
 *                                                                              *
-*  Folder Gallery main source file.                                            *
+*  Key settings item implementation.                                            *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
-*  This file is part of the Folder Gallery project.                            *
+*  This file is part of the QKit project.                                      *
 *                                                                              *
 *  $QT_BEGIN_LICENSE:GPL$                                                      *
 *  You may use this file under the terms of the GNU General Public License     *
@@ -24,41 +24,21 @@
 *                                                                              *
 *******************************************************************************/
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+import QtQuick 1.0
 
-#include <QtDeclarative>
-#include "mediafiles/MediaFile.h"
-#include "mediafiles/MediaDir.h"
-#include "mediafiles/MediaRoots.h"
+Item {
+    property int navMoveLeftKey: Qt.Key_Left // key for left moving in nav items
+    property int navMoveRightKey: Qt.Key_Right // key for right moving in nav items
+    property int navMoveUpKey: Qt.Key_Up // key for up moving in nav items
+    property int navMoveDownKey: Qt.Key_Down // key for down moving in nav items
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    QmlApplicationViewer viewer;
+    property int buttonPressKey: Qt.Key_Select // key for button press
 
-    app.setApplicationName(app.trUtf8("Folder Gallery"));
+    property int dialogCloseKey: Qt.Key_Backspace // key for dialog close
+    property int dialogButtonPressKey: buttonPressKey // key for dialog button press
 
-    qmlRegisterType<MediaFile>("MediaFile", 1, 0, "MediaFile");
-    qmlRegisterType<MediaDir>("MediaDir", 1, 0, "MediaDir");
-    qmlRegisterType<MediaRoots>("MediaRoots", 1, 0, "MediaRoots");
+    property int toolbarLeftButtonPressKey: Qt.Key_Context1 // key for left toolbar button
+    property int toolbarRightButtonPressKey: Qt.Key_Context2 // key for right toolbar button
+    property int toolbarButtonPressKey: buttonPressKey // key for toolbar button press
 
-#if defined(Q_WS_MAEMO_5)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_maemo_5.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_WS_HARMATTAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_harmattan.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_OS_SYMBIAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_symbian.qml"));
-    viewer.showFullScreen();
-#else
-//    (defined(Q_WS_WIN) || defined(Q_WS_X11))
-    viewer.setMainQmlFile(QLatin1String("qml/Main_desktop.qml"));
-    viewer.show();
-#endif
-//    viewer.showExpanded();
-    return app.exec();
 }

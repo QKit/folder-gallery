@@ -1,12 +1,12 @@
 /*******************************************************************************
 *                                                                              *
-*  Folder Gallery main source file.                                            *
+*  Key navigation controller item implementation.                              *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
-*  This file is part of the Folder Gallery project.                            *
+*  This file is part of the QKit project.                                      *
 *                                                                              *
 *  $QT_BEGIN_LICENSE:GPL$                                                      *
 *  You may use this file under the terms of the GNU General Public License     *
@@ -24,41 +24,38 @@
 *                                                                              *
 *******************************************************************************/
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+import QtQuick 1.0
 
-#include <QtDeclarative>
-#include "mediafiles/MediaFile.h"
-#include "mediafiles/MediaDir.h"
-#include "mediafiles/MediaRoots.h"
+Item {
+    property Component highlight // component to use as the highlight
+    property bool highlightFollowsCurrentItem: false // whether the highlight is managed by the view
+    property real highlightMoveSpeed: 400 // highlight move animation speed
+    property int  highlightMoveDuration: -1 // highlight move animation duration
+    property real highlightResizeSpeed: 400 // highlight resize animation speed
+    property int  highlightResizeDuration: -1 // highlight resize animation duration
+    property bool keyNavigationWraps: false // whether the list wraps key navigation
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    QmlApplicationViewer viewer;
-
-    app.setApplicationName(app.trUtf8("Folder Gallery"));
-
-    qmlRegisterType<MediaFile>("MediaFile", 1, 0, "MediaFile");
-    qmlRegisterType<MediaDir>("MediaDir", 1, 0, "MediaDir");
-    qmlRegisterType<MediaRoots>("MediaRoots", 1, 0, "MediaRoots");
-
-#if defined(Q_WS_MAEMO_5)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_maemo_5.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_WS_HARMATTAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_harmattan.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_OS_SYMBIAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_symbian.qml"));
-    viewer.showFullScreen();
-#else
-//    (defined(Q_WS_WIN) || defined(Q_WS_X11))
-    viewer.setMainQmlFile(QLatin1String("qml/Main_desktop.qml"));
-    viewer.show();
-#endif
-//    viewer.showExpanded();
-    return app.exec();
+    // changes navItem's current item, according to key event
+    function moveCurrentIndexByKey(navItem, event) {
+        switch (event.key) {
+        case navItem.moveLeftKey:
+            navItem.highlightFollowsCurrentItem = true
+            navItem.moveCurrentIndexLeft()
+            break
+        case navItem.moveRightKey:
+            navItem.highlightFollowsCurrentItem = true
+            navItem.moveCurrentIndexRight()
+            break
+        case navItem.moveUpKey:
+            navItem.highlightFollowsCurrentItem = true
+            navItem.moveCurrentIndexUp()
+            break
+        case navItem.moveDownKey:
+            navItem.highlightFollowsCurrentItem = true
+            navItem.moveCurrentIndexDown()
+            break
+        default: return // to not accept event
+        }
+        event.accepted = true
+    }
 }

@@ -1,7 +1,7 @@
-foldergallery (1.4.1) stable; urgency=low
+foldergallery (1.5.1) stable; urgency=low
 
-  * Using QKit library.
-  * Therefore, graphical changes.
-  * Toolbar close by click on fullscreen view.
+  * Large graphical changes.
+  * Large internal changes.
+  * Interface responsiveness improving.
 
- -- Kirill Chuvulin <kirill.chuvilin@gmail.com> Wed, 26 Oct 2011 01:07:00 +0400
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com> Thu, 03 Nov 2011 03:05:00 +0400

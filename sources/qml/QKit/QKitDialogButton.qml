@@ -1,12 +1,12 @@
 /*******************************************************************************
 *                                                                              *
-*  Folder Gallery main source file.                                            *
+*  Button item for dialogs implementation.                                     *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
-*  This file is part of the Folder Gallery project.                            *
+*  This file is part of the QKit project.                                      *
 *                                                                              *
 *  $QT_BEGIN_LICENSE:GPL$                                                      *
 *  You may use this file under the terms of the GNU General Public License     *
@@ -24,41 +24,25 @@
 *                                                                              *
 *******************************************************************************/
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+import QtQuick 1.0
 
-#include <QtDeclarative>
-#include "mediafiles/MediaFile.h"
-#include "mediafiles/MediaDir.h"
-#include "mediafiles/MediaRoots.h"
+QKitButton {
+    objectName: "QKitDialogButton"
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    QmlApplicationViewer viewer;
-
-    app.setApplicationName(app.trUtf8("Folder Gallery"));
-
-    qmlRegisterType<MediaFile>("MediaFile", 1, 0, "MediaFile");
-    qmlRegisterType<MediaDir>("MediaDir", 1, 0, "MediaDir");
-    qmlRegisterType<MediaRoots>("MediaRoots", 1, 0, "MediaRoots");
-
-#if defined(Q_WS_MAEMO_5)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_maemo_5.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_WS_HARMATTAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_harmattan.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_OS_SYMBIAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_symbian.qml"));
-    viewer.showFullScreen();
-#else
-//    (defined(Q_WS_WIN) || defined(Q_WS_X11))
-    viewer.setMainQmlFile(QLatin1String("qml/Main_desktop.qml"));
-    viewer.show();
-#endif
-//    viewer.showExpanded();
-    return app.exec();
+    radius: 0.4 * height
+    // UI properties
+    borderWidth: uiController.dialogButtonBorderWidth
+    smooth: uiController.dialogButtonSmooth
+    backgroundColor: uiController.dialogButtonBackgroundColor // background color
+    backgroundColorDimmed: uiController.dialogButtonBackgroundColorDimmed // background color when button is pressed
+    backgroundColorSelected: uiController.dialogButtonBackgroundColorSelected // background color when button is selected
+    borderColor: uiController.dialogButtonBorderColor // border color
+    borderColorDimmed: uiController.dialogButtonBorderColorDimmed // border color when button is pressed
+    borderColorSelected: uiController.dialogButtonBorderColorSelected // border color when button is selected
+    textColor: uiController.dialogButtonTextColor // text color
+    textColorDimmed: uiController.dialogButtonTextColorDimmed // text color when button is pressed
+    textColorSelected: uiController.dialogButtonTextColorSelected // text color when button is selected
+    mouseHoverEnabled: uiController.mouseHoverEnabled // handle mouse hover or not
+    // key properties
+    pressKey: keyController.dialogButtonPressKey // key for press
 }

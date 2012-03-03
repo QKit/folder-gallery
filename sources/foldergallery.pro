@@ -1,6 +1,6 @@
 # Add more folders to ship with the application, here
-folder_qml.source = qml/FolderGallery
-folder_qml.target = qml
+folder_qml.source = qml
+folder_qml.target = .
 DEPLOYMENTFOLDERS = folder_qml
 
 # Additional import path used to resolve QML modules in Creator's code model
@@ -13,7 +13,7 @@ QML_IMPORT_PATH =
 # 0x2002CCCF value if protected UID is given to the application
 #symbian:DEPLOYMENT.installer_header = 0x2002CCCF
 
-VERSION = 1.4.1
+VERSION = 1.5.1
 
 symbian {
     TARGET.UID3 = 0x2004a654
@@ -80,3 +80,4 @@ OTHER_FILES += \
     qtc_packaging/debian_fremantle/control \
     qtc_packaging/debian_fremantle/compat \
     qtc_packaging/debian_fremantle/changelog
+

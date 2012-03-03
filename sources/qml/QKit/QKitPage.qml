@@ -1,6 +1,6 @@
 /*******************************************************************************
 *                                                                              *
-*  Folder Gallery main source file.                                            *
+*  Page item implementation.                                                   *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
@@ -24,41 +24,47 @@
 *                                                                              *
 *******************************************************************************/
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+import QtQuick 1.0
 
-#include <QtDeclarative>
-#include "mediafiles/MediaFile.h"
-#include "mediafiles/MediaDir.h"
-#include "mediafiles/MediaRoots.h"
+QKitRectangle {
+    id: page
+    objectName: "QKitPage"
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    QmlApplicationViewer viewer;
+    property Item toolbar
+    property color backgroundColor: uiController.pageBackgroundColor
+    property color textColor: uiController.pageTextColor
+    property url   texture: uiController.pageTexture
 
-    app.setApplicationName(app.trUtf8("Folder Gallery"));
+    signal backToggled() // goto previos page signal
+    signal menuToggled() // open menu signal
 
-    qmlRegisterType<MediaFile>("MediaFile", 1, 0, "MediaFile");
-    qmlRegisterType<MediaDir>("MediaDir", 1, 0, "MediaDir");
-    qmlRegisterType<MediaRoots>("MediaRoots", 1, 0, "MediaRoots");
+    anchors.fill: parent
+    color: backgroundColor
 
-#if defined(Q_WS_MAEMO_5)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_maemo_5.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_WS_HARMATTAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_harmattan.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_OS_SYMBIAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_symbian.qml"));
-    viewer.showFullScreen();
-#else
-//    (defined(Q_WS_WIN) || defined(Q_WS_X11))
-    viewer.setMainQmlFile(QLatin1String("qml/Main_desktop.qml"));
-    viewer.show();
-#endif
-//    viewer.showExpanded();
-    return app.exec();
+    Image {
+        anchors.fill: parent
+        fillMode: Image.Tile
+        source: page.texture
+    }
+
+    Keys.onPressed: {
+        if (toolbar) // if toolbar exists
+            toolbar.keyPressedEvent(event) // send first to toolbar
+        if (!event.accepted) { // if wasn't acceptet by toolbar
+            switch (event.key) {
+            case Qt.Key_Backspace:
+                backToggled()
+                break
+            case Qt.Key_Escape:
+                menuToggled()
+                break
+            default:
+                return
+            }
+            event.accepted = true
+        }
+    }
+
+    onVisibleChanged: if (visible) focus = true // to focuse on current page
+    onToolbarChanged: toolbar.parent = page
 }
