@@ -30,10 +30,11 @@ Item {
     id: item
     objectName: "QKitItem"
     // controllers
-    property Item logController: parent.logController // logging settings
-    property Item uiController:  parent.uiController  // item with UI settings
-    property Item keyController: parent.keyController // item with key settings
-    property Item navController: parent.navController // key navigation controllerler
+    property Item controllerSource: parent // source of controller items
+    property Item logController: controllerSource.logController // logging settings
+    property Item uiController:  controllerSource.uiController  // item with UI settings
+    property Item keyController: controllerSource.keyController // item with key settings
+    property Item navController: controllerSource.navController // key navigation controllerler
     // QKit properties
     property bool active: true // active or not
     property bool selected: activeFocus // selected or not

@@ -1,3 +1,11 @@
+foldergallery (1.5.3) stable; urgency=low
+
+  * Bugfixes.
+  * QKit 0.4.2.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com> Thu, 03 Nov 2011 12:56:00 +0400
+
+
 foldergallery (1.5.1) stable; urgency=low
 
   * Large graphical changes.
@@ -5,3 +13,95 @@ foldergallery (1.5.1) stable; urgency=low
   * Interface responsiveness improving.
 
  -- Kirill Chuvulin <kirill.chuvilin@gmail.com> Thu, 03 Nov 2011 03:05:00 +0400
+
+
+foldergallery (1.4.1) stable; urgency=low
+
+  * Using QKit library.
+  * Therefore, graphical changes.
+  * Toolbar close by click on fullscreen view.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com> Wed, 26 Oct 2011 01:07:00 +0400
+
+
+foldergallery (1.4.0) stable; urgency=low
+
+  * Using QKit library.
+  * Therefore, graphical changes.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com> Tues, 25 Oct 2011 23:29:00 +0400
+
+
+foldergallery (1.3.4) stable; urgency=low
+
+  * A little trick to improve the GUI responsiveness at folder view page.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Fri, 13 Oct 2011 13:07:00 +0400
+
+
+foldergallery (1.3.3) stable; urgency=low
+
+  * Bug fixes.
+  * Key navigation.
+  * Small graphical changes.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Wed, 05 Oct 2011 2:24:00 +0400
+
+
+foldergallery (1.2.2) stable; urgency=low
+
+  * A little trick to increase the GUI responsiveness.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Wed, 14 Sep 2011 1:37:00 +0400
+
+
+foldergallery (1.1.7) stable; urgency=low
+
+  * Thumbnail is showing in fullscreen view until the picture is loaded.
+  * Small graphical changes.
+  * Thumbnail files are stored in "~/MyDocs/.thumbnails".
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Sat, 10 Sep 2011 03:51:00 +0400
+
+
+foldergallery (1.1.6) stable; urgency=low
+
+  * Thumbnail calculation threads number reduced to one.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Fri, 09 Sep 2011 08:12:00 +0400
+
+
+foldergallery (1.1.3) stable; urgency=low
+
+  * Calculation of thumbnails in separate threads.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Thu, 08 Sep 2011 17:47:00 +0400
+
+
+foldergallery (1.1.1) stable; urgency=low
+
+  * Thumbnails cache clearing after exit.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Thu, 08 Sep 2011 00:14:00 +0400
+
+
+foldergallery (1.1.0) stable; urgency=low
+
+  * Thumbnails cache support.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Wed, 07 Sep 2011 19:07:00 +0400
+
+
+foldergallery (1.0.4) stable; urgency=low
+
+  * Nokia N900 MicroSD support.
+  * Symbian support.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Tue, 06 Sep 2011 23:14:00 +0400
+
+
+foldergallery (1.0.2) stable; urgency=low
+
+  * Changed dirs cache algorithm.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com>  Mon, 05 Sep 2011 05:03:00 +0400

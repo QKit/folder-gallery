@@ -30,10 +30,7 @@ QKitDialogButton {
     id: menuElement
     objectName: "QKitMenuElement"
 
-    logController: local.menuItem.logController
-    uiController: local.menuItem.uiController
-    keyController: local.menuItem.keyController
-    navController: local.menuItem.navController
+    controllerSource: local.menuItem
 
     width: local.menuItem.elementWidth
     height: local.menuItem.elementHeight

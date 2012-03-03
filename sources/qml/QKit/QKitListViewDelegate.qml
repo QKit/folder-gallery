@@ -28,8 +28,5 @@ import QtQuick 1.0
 
 QKitItem {
     objectName: "QKitListViewDelegate"
-    logController: ListView.view.logController // logging settings
-    uiController:  ListView.view.uiController  // item with UI settings
-    keyController: ListView.view.keyController // item with key settings
-    navController: ListView.view.navController // key navigation controllerler
+    controllerSource: ListView.view
 }

@@ -28,8 +28,5 @@ import QtQuick 1.0
 
 QKitItem {
     objectName: "QKitGridViewDelegate"
-    logController: GridView.view.logController // logging settings
-    uiController:  GridView.view.uiController  // item with UI settings
-    keyController: GridView.view.keyController // item with key settings
-    navController: GridView.view.navController // key navigation controllerler
+    controllerSource: GridView.view
 }

@@ -30,15 +30,17 @@ Rectangle {
     id: item
     objectName: "QKitRectangle"
     // controllers
-    property Item logController: parent.logController // logging settings
-    property Item uiController:  parent.uiController  // item with UI settings
-    property Item keyController: parent.keyController // item with key settings
-    property Item navController: parent.navController // key navigation controllerler
+    property Item controllerSource: parent // source of controller items
+    property Item logController: controllerSource.logController // logging settings
+    property Item uiController:  controllerSource.uiController  // item with UI settings
+    property Item keyController: controllerSource.keyController // item with key settings
+    property Item navController: controllerSource.navController // key navigation controllerler
     // QKit properties
     property bool active: true // active or not
     property bool selected: activeFocus // selected or not
     // logging
     Component.onCompleted: if (logController && logController.createdLogging) console.log(item.objectName + " - created")
+    onParentChanged: if (logController && logController.parentLogging) console.log(item.objectName + " - parent changed to " + (item.parent ? item.parent.objectName : "[NULL]"))
     onActiveChanged: if (logController && logController.activeLogging) console.log(item.objectName + " - active changed to " + active)
     onSelectedChanged: if (logController && logController.selectedLogging) console.log(item.objectName + " - selected changed to " + selected)
     onFocusChanged: if (logController && logController.focusLogging) console.log(item.objectName + " - focus changed to " + focus)

@@ -35,6 +35,7 @@ QKitApplication {
     MediaRoots { id: mediaRoots }
 
     logController: QKitLogController {
+        parentLogging: true
 //        createdLogging: true
 //        activeLogging: true
 //        selectedLogging: true
@@ -102,10 +103,9 @@ QKitApplication {
             onClicked: Qt.quit()
         }
         children: [Text {
-            id: copyright
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            font.pixelSize: 0.03 * Math.min(menu.width, menu.height)
+            font.pixelSize: 0.04 * Math.min(menu.width, menu.height)
             text: "by Kirill Chuvilin aka KiRiK for MaemoWorld.ru"
             color: "white"
         }]
@@ -187,7 +187,7 @@ QKitApplication {
             folderPage.focus = true
             break
         case "view":
-            viewPage.facus = true
+            viewPage.focus = true
             break
         }
     }

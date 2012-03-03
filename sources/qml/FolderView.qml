@@ -37,25 +37,17 @@ QKitNavGridView {
     cellWidth: Math.min(Math.round(width / Math.round(width / 256 + 0.5) - 0.5), 0.49 * width)
     cellHeight: 1.2 * cellWidth
     keyNavigationWraps: false
-    delegate: QKitGridViewDelegate {
+    delegate: QKitLoader {
         width: folderView.cellWidth
         height: folderView.cellHeight
+        controllerSource: GridView.view
+        Component.onCompleted: sourceComponent = (folderView.model[index].isDir ? folderThumbnail : fileThumbnail)
 
-        Loader {
-            id: thumbnail
-            anchors.fill: parent
-            sourceComponent: (folderView.model[index].isDir ? folderThumbnail : fileThumbnail)
-        }
-        onFocusChanged: if (focus) thumbnail.item.forceActiveFocus()
+        onFocusChanged: if (focus) item.forceActiveFocus()
 
         Component {
             id: folderThumbnail
             FolderThumbnail { // thumbnail for folder element
-                logController: folderView.logController // logging settings
-                uiController:  folderView.uiController  // item with UI settings
-                keyController: folderView.keyController // item with key settings
-                navController: folderView.navController // key navigation controllerler
-                sourceDir: folderView.model[index]
                 Keys.onPressed: {
                     if (event.key == keyController.buttonPressKey) {
                         folderClicked(folderView.model[index], index)
@@ -66,17 +58,15 @@ QKitNavGridView {
                     anchors.fill: parent
                     onClicked: folderClicked(folderView.model[index], index)
                 }
+                Component.onCompleted: sourceDir = folderView.model[index]
+                onParentChanged: if (parent) controllerSource = parent
             }
         }
 
         Component {
             id: fileThumbnail
             QKitThumbnail { // thumbnail for folder element
-                logController: folderView.logController // logging settings
-                uiController:  folderView.uiController  // item with UI settings
-                keyController: folderView.keyController // item with key settings
-                navController: folderView.navController // key navigation controllerler
-                source: folderView.model[index].thumbnail
+                source: (folderView.model[index] && !folderView.model[index].isDir ? folderView.model[index].thumbnail : "")
                 transform: Rotation {
                     angle: -20 + 40 * Math.random()
                     origin.x: width * (0.25 + 0.5 * Math.random())
@@ -92,6 +82,7 @@ QKitNavGridView {
                     anchors.fill: parent
                     onClicked: fileClicked(folderView.model[index], index)
                 }
+                onParentChanged: if (parent) controllerSource = parent
             }
         }
     }
