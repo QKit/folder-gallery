@@ -39,7 +39,10 @@ QKitPage {
 
     FolderView {
         id: folderView
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.toolbar.top
         model: mediaRoots.list
         onFolderClicked: homePage.openFolderToggled(dir, index) // to go to folder page
     }

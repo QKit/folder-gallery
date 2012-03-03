@@ -94,7 +94,13 @@ QKitItem {
 
             onMaxWidthChanged: thumbnailImage.resize()
             onMaxHeightChanged: thumbnailImage.resize()
-            onSourceChanged: originalSizeStored = false
+            onSourceChanged: {
+                originalSizeStored = false
+                if (visible) {
+                    visible = false
+                    visible = true
+                }
+            }
             onStatusChanged: {
                 if (thumbnailImage.status != Image.Ready) return
                 thumbnailImage.originalSourceWidth = thumbnailImage.sourceSize.width

@@ -1,6 +1,6 @@
 /*******************************************************************************
 *                                                                              *
-*  Abstract media file implementation.                                         *
+*  Thumbnails generator implementation.                                        *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
@@ -24,58 +24,62 @@
 *                                                                              *
 *******************************************************************************/
 
+#ifndef _MediaThumbnailGenerator_h_
+#define _MediaThumbnailGenerator_h_
+
+#include <QThread>
+#include <QMutex>
 #include "MediaFile.h"
 
-QMultiMap<QUrl, MediaFile*> MediaFile::mediaFiles;
+/*!
+ * \brief Element of thumbnails queue.
+ * \author KiRiK aka Kirill Chuvilin (kirik-ch.ru)
+ */
+struct MediaThumbnailElement {
+    QUrl fileSource; //!< source file
+    QString thumbnailPath; //!< path to thumbnail
+};
 
-MediaFile::MediaFile(const QString &path, QObject *parent) :
-    QObject(parent) {
-    this->setPath(path);
-    MediaFile::mediaFiles.insertMulti(this->getSource(), this); // add new file to list
-}
+/*!
+ * \brief Thumbnail generator thread.
+ * \author KiRiK aka Kirill Chuvilin (kirik-ch.ru)
+ */
+class MediaThumbnailGenerator : public QThread {
+    Q_OBJECT
 
+public:
+    /*!
+     * \brief Constructor.
+     * \param dirPath path to dir with thumbnails
+     */
+    MediaThumbnailGenerator();
 
-MediaFile::MediaFile(const QUrl &source, QObject *parent) :
-    QObject(parent) {
-    this->setSource(source);
-    mediaFiles.insertMulti(this->getSource(), this); // add new file to list
-}
+public slots:
+    /*!
+     * \brief Adds thumbnail for file.
+     * \param fileSource    source file
+     * \param thumbnailPath path to thumbnail
+     * \param inQueue       use queue of separate thread or not
+     */
+    void generateThumbnail(const QUrl& fileSource, const QString& thumbnailPath, bool inQueue = true);
 
+    /*!
+     * \brief Separate thread action.
+     */
+    virtual void run();
 
-MediaFile::~MediaFile() {
-    mediaFiles.remove(this->getSource(), this); // remove from file list
-}
+signals:
+    /*!
+     * \brief Emits when thumbnail file generated.
+     * \param fileSource source file
+     */
+    void thumbnailReady(const QUrl& fileSource) const;
 
-QUrl MediaFile::getThumbnail() {
-    if (this->thumbnailPath.isNull()) { // thumbnail isn't defined
-        emit generateThumbnail(this->getSource()); // signal to generate thumbnail for file
-    }
-    return QUrl::fromLocalFile(this->thumbnailPath); // path to thumbnail
-}
+private:
+    int maxWidth; //!< max width of thumbnail
+    int maxHeight; //!< max height of thumbnail
+    QList<MediaThumbnailElement> toProcessStack; //!< unfinished thumbnails
+    QMutex toProcessStackMutex; //!< to protect todoStack in threads
+};
 
-
-QImage MediaFile::getThumbnailImage(int width, int height) {
-    if (!this->fileInfo.exists()) throw MediaFile::EXCEPTION_ACCESS;
-    return QImage(this->fileInfo.absoluteFilePath()).scaled(width, height, Qt::KeepAspectRatio);
-}
-
-
-void MediaFile::setPath(const QString &path) {
-    mediaFiles.remove(this->getSource(), this); // remove with old source
-    this->fileInfo.setFile(path);
-    if (!this->fileInfo.exists()) throw MediaFile::EXCEPTION_ACCESS;
-    mediaFiles.insertMulti(this->getSource(), this); // add with new source
-    this->setThumbnail(QString::null); // no thumbnail
-    emit sourceChanged();
-}
-
-
-void MediaFile::setSource(const QUrl &source) {
-    this->setPath(source.toLocalFile());
-}
-
-
-void MediaFile::setThumbnail(const QString thumbnailPath) {
-    this->thumbnailPath = thumbnailPath;
-    emit thumbnailChanged(); // thumbnail was changed
-}
+#endif // _MediaThumbnailGenerator_h_

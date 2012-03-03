@@ -13,7 +13,7 @@ QML_IMPORT_PATH =
 # 0x2002CCCF value if protected UID is given to the application
 #symbian:DEPLOYMENT.installer_header = 0x2002CCCF
 
-VERSION = 1.5.3
+VERSION = 1.6.4
 
 symbian {
     TARGET.UID3 = 0x2004a654
@@ -49,18 +49,21 @@ CONFIG += qdeclarative-boostable
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
+QT += sql
 HEADERS += \
-    mediafiles/MediaDir.h \
-    mediafiles/MediaFile.h \
+    DeclarativeList.h \
+    mediafiles/MediaThumbnailGenerator.h \
+    mediafiles/MediaThumbnailDb.h \
     mediafiles/MediaRoots.h \
-    mediafiles/MediaThumbnails.h \
-    DeclarativeList.h
+    mediafiles/MediaFile.h \
+    mediafiles/MediaDir.h
 
 SOURCES += main.cpp \
-    mediafiles/MediaDir.cpp \
-    mediafiles/MediaFile.cpp \
+    mediafiles/MediaThumbnailGenerator.cpp \
+    mediafiles/MediaThumbnailDb.cpp \
     mediafiles/MediaRoots.cpp \
-    mediafiles/MediaThumbnails.cpp
+    mediafiles/MediaFile.cpp \
+    mediafiles/MediaDir.cpp
 
 OTHER_FILES += \
     foldergallery.svg \
@@ -70,6 +73,7 @@ OTHER_FILES += \
     foldergallery80.png \
     qtc_packaging/debian_harmattan/rules \
     qtc_packaging/debian_harmattan/README \
+    qtc_packaging/debian_harmattan/manifest.aegis \
     qtc_packaging/debian_harmattan/copyright \
     qtc_packaging/debian_harmattan/control \
     qtc_packaging/debian_harmattan/compat \
@@ -80,5 +84,3 @@ OTHER_FILES += \
     qtc_packaging/debian_fremantle/control \
     qtc_packaging/debian_fremantle/compat \
     qtc_packaging/debian_fremantle/changelog
-
-

@@ -27,10 +27,10 @@
 #include "MediaDir.h"
 #include "DeclarativeList.h"
 
-MediaDir::MediaDir(QString source, QString name, QObject *parent) :
+MediaDir::MediaDir(QString path, QString name, QObject *parent) :
     QObject(parent) {
-    if (!source.isNull())
-        this->setSource(source);
+    if (!path.isNull())
+        this->setPath(path);
     if (!name.isNull())
         this->setName(name);
     this->connect(this, SIGNAL(filesChanged()), SIGNAL(contentChanged()));
@@ -38,30 +38,28 @@ MediaDir::MediaDir(QString source, QString name, QObject *parent) :
 }
 
 
-int MediaDir::getFilesCount() {
+QList<MediaFile*> MediaDir::getFiles() {
     if (this->m_files.isEmpty()) // wasn't recalculated or really empty
         this->refreshFiles(); // recalculate list
-    return this->m_files.count();
+    return this->m_files;
 }
 
 
-QDeclarativeListProperty<MediaFile> MediaDir::getFiles() {
-    if (this->m_files.isEmpty()) // wasn't recalculated or really empty
-        this->refreshFiles(); // recalculate list
+QDeclarativeListProperty<MediaFile> MediaDir::getFilesProperty() {
+    this->getFiles(); // prepare files
     return DeclarativeList<MediaFile>::generateProperty(this, &m_files, false, true);
 }
 
 
-int MediaDir::getDirsCount() {
+QList<MediaDir*> MediaDir::getDirs() {
     if (this->m_dirs.isEmpty()) // wasn't recalculated or really empty
         this->refreshDirs(); // recalculate list
-    return this->m_dirs.count();
+    return this->m_dirs;
 }
 
 
-QDeclarativeListProperty<MediaDir> MediaDir::getDirs() {
-    if (this->m_dirs.isEmpty()) // wasn't recalculated or really empty
-        this->refreshDirs(); // recalculate list
+QDeclarativeListProperty<MediaDir> MediaDir::getDirsProperty() {
+    this->getDirs(); // prepare dirs
     return DeclarativeList<MediaDir>::generateProperty(this, &m_dirs, false, true);
 }
 
@@ -73,7 +71,7 @@ int MediaDir::getContentCount() {
 }
 
 
-QDeclarativeListProperty<QObject> MediaDir::getContent() {
+QDeclarativeListProperty<QObject> MediaDir::getContentProperty() {
     if (this->m_content.isEmpty()) // wasn't recalculated or really empty
         this->refreshContent(); // recalculate list
     return DeclarativeList<QObject>::generateProperty(this, &m_content, false, true);
@@ -86,8 +84,8 @@ void MediaDir::setName(QString name) {
 }
 
 
-void MediaDir::setSource(QString source) {
-    this->m_dir.setPath(source);
+void MediaDir::setPath(QString path) {
+    this->m_dir.setPath(path);
     if (this->m_name.isNull()) // if name isn't set
         this->setName(this->m_dir.dirName()); // sets system directory name
     this->m_files.clear(); // clears previos list to recalculate after
@@ -98,14 +96,27 @@ void MediaDir::setSource(QString source) {
 }
 
 
+void MediaDir::refreshThumbnails(int depth) {
+    this->getFiles();
+    foreach (MediaFile* mediaFile, this->m_files)
+        mediaFile->getThumbnail();
+    this->getDirs();
+    depth--;
+    if (depth) {
+        foreach (MediaDir* mediaDir, this->m_dirs)
+            mediaDir->refreshThumbnails(depth - 1);
+    }
+}
+
+
 void MediaDir::refreshFiles() {
     this->m_files.clear(); // clears previos list
     QStringList mediaNames;
     mediaNames << "*.jpg" << "*.png" << "*.gif" << "*.bmp";
     QStringList fileNames = this->m_dir.entryList(mediaNames, QDir::Files | QDir::Readable);
     foreach (QString fileName, fileNames) { // for all file names
-        MediaFile* newMediaFile = new MediaFile(this->m_dir.absoluteFilePath(fileName)); // media file for path
-        QObject::connect(newMediaFile, SIGNAL(generateThumbnail(MediaFile*)), this, SIGNAL(generateThumbnail(MediaFile*))); // for thumbnail generation
+        MediaFile* newMediaFile = new MediaFile(this->m_dir.absoluteFilePath(fileName), this); // media file for path
+        QObject::connect(newMediaFile, SIGNAL(generateThumbnail(QUrl)), this, SIGNAL(generateThumbnail(QUrl))); // for thumbnail generation
         this->m_files.append(newMediaFile);
     }
 }
@@ -116,7 +127,7 @@ void MediaDir::refreshDirs() {
     QStringList dirNames = this->m_dir.entryList(QDir::NoDotAndDotDot | QDir::Dirs | QDir::Readable);
     foreach (QString dirName, dirNames) { // for all dir names
         MediaDir* newMediaDir = new MediaDir(this->m_dir.absoluteFilePath(dirName));
-        QObject::connect(newMediaDir, SIGNAL(generateThumbnail(MediaFile*)), this, SIGNAL(generateThumbnail(MediaFile*))); // for thumbnail generation
+        QObject::connect(newMediaDir, SIGNAL(generateThumbnail(QUrl)), this, SIGNAL(generateThumbnail(QUrl))); // for thumbnail generation
         this->m_dirs.append(newMediaDir);
     }
 }
@@ -124,10 +135,10 @@ void MediaDir::refreshDirs() {
 
 void MediaDir::refreshContent() {
     this->m_content.clear(); // clears previos list
-    this->refreshDirs();
+    this->getDirs();
     foreach (MediaDir* mediaDir, this->m_dirs)
         this->m_content.append(mediaDir);
-    this->refreshFiles();
+    this->getFiles();
     foreach (MediaFile* mediaFile, this->m_files)
         this->m_content.append(mediaFile);
 }

@@ -1,3 +1,12 @@
+foldergallery (1.6.4) stable; urgency=low
+
+  * Bugfixes.
+  * Using a database to store the thumbnails.
+  * Changed thumbnails creating method.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com> Mon, 23 Jan 2012 18:57:00 +0400
+
+
 foldergallery (1.5.3) stable; urgency=low
 
   * Bugfixes.

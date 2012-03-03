@@ -1,6 +1,6 @@
 /*******************************************************************************
 *                                                                              *
-*  Abstract media file implementation.                                         *
+*  Thumbnails generator implementation.                                        *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
@@ -24,58 +24,55 @@
 *                                                                              *
 *******************************************************************************/
 
-#include "MediaFile.h"
+#include "MediaThumbnailGenerator.h"
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QVariant>
 
-QMultiMap<QUrl, MediaFile*> MediaFile::mediaFiles;
-
-MediaFile::MediaFile(const QString &path, QObject *parent) :
-    QObject(parent) {
-    this->setPath(path);
-    MediaFile::mediaFiles.insertMulti(this->getSource(), this); // add new file to list
+MediaThumbnailGenerator::MediaThumbnailGenerator() {
+    this->maxWidth = 256;
+    this->maxHeight = 256;
 }
 
 
-MediaFile::MediaFile(const QUrl &source, QObject *parent) :
-    QObject(parent) {
-    this->setSource(source);
-    mediaFiles.insertMulti(this->getSource(), this); // add new file to list
-}
-
-
-MediaFile::~MediaFile() {
-    mediaFiles.remove(this->getSource(), this); // remove from file list
-}
-
-QUrl MediaFile::getThumbnail() {
-    if (this->thumbnailPath.isNull()) { // thumbnail isn't defined
-        emit generateThumbnail(this->getSource()); // signal to generate thumbnail for file
+void MediaThumbnailGenerator::generateThumbnail(const QUrl& fileSource, const QString& thumbnailPath, bool inQueue) {
+    if (inQueue) {
+        QMutexLocker todoStackLocker(&this->toProcessStackMutex);
+        bool isAtStack = false;
+        MediaThumbnailElement element;
+        // try to find it in todo stack
+        for (int i = 0; i < this->toProcessStack.size(); i++) {
+            if (this->toProcessStack.at(i).fileSource == fileSource) {
+                isAtStack = true;
+                element = this->toProcessStack.takeAt(i);
+                break;
+            }
+        }
+        if (!isAtStack) { // if wasn't in todo stack
+            element.fileSource = fileSource;
+            element.thumbnailPath = thumbnailPath;
+        }
+        this->toProcessStack.append(element); // append new or taken element
+        todoStackLocker.unlock();
+        if (!this->isRunning())
+            this->start();
+    } else {
+        MediaFile mediaFile(fileSource); // media file for the source
+        mediaFile.getThumbnailImage(this->maxWidth, this->maxHeight).save(thumbnailPath); // saves thumbnail
+        QFileInfo fileTester(thumbnailPath);
+        while (!fileTester.isWritable()) {} // whait for creation
     }
-    return QUrl::fromLocalFile(this->thumbnailPath); // path to thumbnail
 }
 
 
-QImage MediaFile::getThumbnailImage(int width, int height) {
-    if (!this->fileInfo.exists()) throw MediaFile::EXCEPTION_ACCESS;
-    return QImage(this->fileInfo.absoluteFilePath()).scaled(width, height, Qt::KeepAspectRatio);
-}
-
-
-void MediaFile::setPath(const QString &path) {
-    mediaFiles.remove(this->getSource(), this); // remove with old source
-    this->fileInfo.setFile(path);
-    if (!this->fileInfo.exists()) throw MediaFile::EXCEPTION_ACCESS;
-    mediaFiles.insertMulti(this->getSource(), this); // add with new source
-    this->setThumbnail(QString::null); // no thumbnail
-    emit sourceChanged();
-}
-
-
-void MediaFile::setSource(const QUrl &source) {
-    this->setPath(source.toLocalFile());
-}
-
-
-void MediaFile::setThumbnail(const QString thumbnailPath) {
-    this->thumbnailPath = thumbnailPath;
-    emit thumbnailChanged(); // thumbnail was changed
+void MediaThumbnailGenerator::run() {
+    while (true) {
+        QMutexLocker todoStackLocker(&this->toProcessStackMutex);
+        if (this->toProcessStack.isEmpty())
+            return;
+        MediaThumbnailElement element = this->toProcessStack.takeLast();
+        todoStackLocker.unlock();
+        this->generateThumbnail(element.fileSource, element.thumbnailPath, false);
+        emit thumbnailReady(element.fileSource);
+    }
 }

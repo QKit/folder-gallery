@@ -43,16 +43,15 @@ QKitPage {
 
     FolderView {
         id: folderView
-
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.toolbar.top
         model: folderPage.dir.content
         onFolderClicked: folderPage.viewFolderToggled(dir, index)
         onFileClicked: folderPage.viewFileToggled(file, index - dir.dirsCount)
     }
 
     onFocusChanged: folderView.focus = focus
-    onDirChanged: {
-        folderView.model = folderPage.dir.content
-        folderView.currentIndex = -1
-    }
+    onDirChanged: folderView.currentIndex = -1
 }

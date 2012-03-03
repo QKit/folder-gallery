@@ -29,7 +29,8 @@
 
 MediaRoots::MediaRoots(QObject *parent) :
     QObject(parent) {
-    this->thumbnalBase.setDirPath(this->getAppDataDirPath() + "/.thumbnails");
+    this->thumbnailsDb.setDirPath(this->getAppDataDirPath() + "/.thumbnails");
+    this->thumbnailsDb.refresh();
     QStringList imageRoots;
 #if defined(Q_WS_MAEMO_5)
     imageRoots << QDir::homePath();
@@ -49,7 +50,7 @@ MediaRoots::MediaRoots(QObject *parent) :
     imageRoots << "E:";
     imageRoots << "E:/Images";
 #elif defined(Q_WS_WIN)
-    imageRoots << QDir::homePath();
+//    imageRoots << QDir::homePath();
     imageRoots << QDir::homePath() + "/Pictures";
 #else
     imageRoots << QDir::homePath();
@@ -57,14 +58,9 @@ MediaRoots::MediaRoots(QObject *parent) :
     foreach (QString imageRoot, imageRoots) {
         if (QDir(imageRoot).isReadable()) {
             MediaDir* newMediaDir = new MediaDir(imageRoot);
-            QObject::connect(newMediaDir, SIGNAL(generateThumbnail(MediaFile*)), &(this->thumbnalBase), SLOT(generateThumbnail(MediaFile*))); // for thumbnail generation
+            QObject::connect(newMediaDir, SIGNAL(generateThumbnail(QUrl)), &(this->thumbnailsDb), SLOT(generateThumbnail(QUrl))); // for thumbnail generation
             this->m_list.append(newMediaDir);
         }
-//        QDir rootDir(imageRoot);
-//        QStringList dirs = rootDir.entryList(QDir::NoDotAndDotDot | QDir::Dirs | QDir::Readable);
-//        foreach (QString dir, dirs) {
-//            this->m_list.append(new MediaDir(rootDir.absoluteFilePath(dir)));
-//        }
     }
 }
 
@@ -86,6 +82,6 @@ QString MediaRoots::getAppDataDirPath() const {
 
 
 void MediaRoots::setThumbnailDirPath(const QString dirPath) {
-    this->thumbnalBase.setDirPath(dirPath);
+    this->thumbnailsDb.setDirPath(dirPath);
     emit thumbnailDirPathChanged();
 }

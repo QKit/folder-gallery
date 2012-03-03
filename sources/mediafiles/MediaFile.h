@@ -31,82 +31,138 @@
 #include <QUrl>
 #include <QFileInfo>
 #include <QImage>
+#include <QDateTime>
+#include <QMultiMap>
 
+/*!
+ * \brief Media file class.
+ * \author KiRiK aka Kirill Chuvilin (kirik-ch.ru)
+ */
 class MediaFile : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(bool isDir READ isDir CONSTANT) // indicates dir or not
-    Q_PROPERTY(QString name READ getName NOTIFY sourceChanged) // name of file
-    Q_PROPERTY(QUrl source READ getSource WRITE setSource NOTIFY sourceChanged) // path to file
-    Q_PROPERTY(QUrl thumbnail READ getThumbnail NOTIFY thumbnailChanged) // path to thumbnail file
+    Q_PROPERTY(bool isDir READ isDir CONSTANT) //!< indicates dir or file
+    Q_PROPERTY(QString name READ getName NOTIFY sourceChanged) //!< name of file
+    Q_PROPERTY(QUrl source READ getSource WRITE setSource NOTIFY sourceChanged) //!< path to file
+    Q_PROPERTY(QUrl thumbnail READ getThumbnail NOTIFY thumbnailChanged) //!< path to thumbnail file
+    Q_PROPERTY(uint lastModified READ getLastModified NOTIFY sourceChanged) //!< time of last modify
 
 public:
-    /*
-      Constructor.
-    */
-    explicit MediaFile(const QString source = QString::null, QObject *parent = 0);
-    explicit MediaFile(const QUrl source, QObject *parent = 0);
+    enum Exception { //!< MediaFile exceptions
+        EXCEPTION_ACCESS //!< throws when cann't access to source file
+    };
 
-    /*
-      Indicates dir or not.
-    */
+    /*!
+     * \brief Constructor.
+     * \param path   string with path to file
+     * \param parent parent object
+     */
+    explicit MediaFile(const QString &path = QString::null, QObject *parent = 0);
+
+    /*!
+     * \brief Constructor.
+     * \param source url to to file
+     * \param parent parent object
+     */
+    explicit MediaFile(const QUrl &source, QObject *parent = 0);
+
+    /*!
+     * \brief Destructor.
+     * \param source url to to file
+     * \param parent parent object
+     */
+    ~MediaFile();
+
+    /*!
+     * \brief To indicate dir or file.
+     * \return false
+     */
     static bool isDir() {return false;}
 
-    /*
-      Returns name of file.
-    */
+    /*!
+     * \brief Returns name of file.
+     * \return string with directory name
+     */
     QString getName() const {return this->fileInfo.baseName();}
 
-    /*
-      Returns path to file.
-    */
+    /*!
+     * \brief Returns path to file.
+     * \return string with absolute path
+     */
+    QString getPath() const {return this->fileInfo.absoluteFilePath();}
+
+    /*!
+     * \brief Returns url to file.
+     * \return source url
+     */
     QUrl getSource() const {return QUrl::fromLocalFile(this->fileInfo.absoluteFilePath());}
 
-    /*
-      Returns path to thumbnail file.
-    */
+    /*!
+     * \brief Returns path to thumbnail file.
+     * \return string with absolute path
+     */
     QUrl getThumbnail();
 
-    /*
-      Returns thumbnail image for file.
-      width  - width of thumbnail
-      height - height of thumbnail
-    */
-    QImage getThumbnailImage(int width, int height) {return QImage(this->fileInfo.absoluteFilePath()).scaled(width, height, Qt::KeepAspectRatio);}
+    /*!
+     * \brief Returns thumbnail image for file.
+     * \param width  max width of thumbnail
+     * \param height max height of thumbnail
+     */
+    QImage getThumbnailImage(int width, int height);
+
+    /*!
+     * \brief Returns time of last modify.
+     * \return time of last modify in seconds since 1970-01-01T00:00:00, Coordinated Universal Time
+     */
+    uint getLastModified() {return this->fileInfo.lastModified().toTime_t();}
+
+    /*!
+     * \brief Selects all files with particular source.
+     * \return list of pointers to files
+     * \param source url with file source
+     */
+    static QList<MediaFile*> allBySource(const QUrl &source) {return MediaFile::mediaFiles.values(source);}
 
 public slots:
-    /*
-      Sets path to file.
-    */
-    void setSource(const QString source);
-    void setSource(const QUrl source) {this->setSource(source.toLocalFile());}
+    /*!
+     * \brief Sets path to file.
+     * \param string with path to file
+     */
+    void setPath(const QString &path);
 
-    /*
-      Sets path to thumbnail file.
-      path - path to thumbnail image
-    */
-    void setThumbnail(const QString path);
+    /*!
+     * \brief Sets url to file.
+     * \param source source url
+     */
+    void setSource(const QUrl &source);
+
+    /*!
+     * \brief Sets path to thumbnail file.
+     * \param thumbnailPath string with path to thumbnail image
+     */
+    void setThumbnail(const QString thumbnailPath);
 
 signals:
-    /*
-      Emited when source property changes.
-    */
+    /*!
+     * \brief Emited when source property changes.
+     */
     void sourceChanged();
 
-    /*
-      Emited when thumbnail property changes.
-    */
+    /*!
+     * \brief Emited when thumbnail property changes.
+     */
     void thumbnailChanged();
 
-    /*
-      Emited when new thumbnail needed.
-      mediaFile - file for thumbnail
-    */
-    void generateThumbnail(MediaFile* mediaFile);
+    /*!
+     * \brief Emited when new thumbnail is needed.
+     * \param source url to file source
+     */
+    void generateThumbnail(const QUrl &source);
 
 private:
-    QFileInfo fileInfo; // file info object
-    QString thumbnailPath; // path to thumbnail
+    QFileInfo fileInfo; //!< file info object
+    QString thumbnailPath; //!< path to thumbnail
+    static QMultiMap<QUrl, MediaFile*> mediaFiles; //!< list of all media files
 };
 
 #endif // _MediaFile_h_
