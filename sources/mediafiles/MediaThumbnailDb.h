@@ -37,6 +37,7 @@
 class MediaThumbnailDb : public QObject {
     Q_OBJECT
 
+    Q_PROPERTY(QString dirPath READ getDirPath WRITE setDirPath NOTIFY dirPathChanged) //!< absolute path to dir with thumbnail files
     Q_PROPERTY(QUrl lastFileSource READ getLastFileSource NOTIFY lastFileSourceChanged) //!< last processed file
 
 public:
@@ -78,6 +79,10 @@ public slots:
     void refresh();
 
 signals:
+    /*!
+     * Emits when dirPath ptoperty changes.
+     */
+    void dirPathChanged();
     /*!
      * Emits when lastFile ptoperty changes.
      */

@@ -1,10 +1,18 @@
+foldergallery (1.8.5) stable; urgency=low
+
+  * Interface responsiveness improving.
+  * No waiting on start.
+
+ -- Kirill Chuvilin <kirill.chuvilin@gmail.com> Fri, 09 Feb 2012 18:30:00 +0400
+
+
 foldergallery (1.8.3) stable; urgency=low
 
   * Much faster (now it can even be used on Symbian devices :) ).
   * Thumbnails in a png format (please, remove the folder ".thumbnails" in your home directory).
   * Bugfixes.
 
- -- Kirill Chuvilin <kirill.chuvilin@gmail.com> Wed, 08 Feb 2012 00:03:29 +0400
+ -- Kirill Chuvilin <kirill.chuvilin@gmail.com> Wed, 08 Feb 2012 03:29:00 +0400
 
 
 foldergallery (1.7.4) stable; urgency=low
@@ -13,7 +21,7 @@ foldergallery (1.7.4) stable; urgency=low
   * No need in QtQuick 1.0 Compatibility Plugin for Maemo 5.
   * Big images on fullpage view fix.
 
- -- Kirill Chuvilin <kirill.chuvilin@gmail.com> Sat, 04 Feb 2012 00:01:52 +0400
+ -- Kirill Chuvilin <kirill.chuvilin@gmail.com> Sat, 04 Feb 2012 01:52:00 +0400
 
 
 foldergallery (1.7.3) stable; urgency=low
@@ -21,7 +29,7 @@ foldergallery (1.7.3) stable; urgency=low
   * Bugfixes.
   * QKit 0.4.3.
 
- -- Kirill Chuvilin <kirill.chuvilin@gmail.com> Fri, 03 Feb 2012 00:01:57 +0400
+ -- Kirill Chuvilin <kirill.chuvilin@gmail.com> Fri, 03 Feb 2012 01:57:00 +0400
 
 
 foldergallery (1.7.2) stable; urgency=low

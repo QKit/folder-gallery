@@ -50,6 +50,7 @@ QKitItem {
         border.width: thumbnail.borderWidth
         border.color: thumbnail.borderColor
         color: thumbnail.backgroundColor
+        smooth: thumbnail.smooth
 
         states: [
             State { // on selected or focused
@@ -71,8 +72,6 @@ QKitItem {
         anchors.fill: parent
         anchors.margins: 2 * thumbnail.borderWidth
         fillMode: Image.PreserveAspectFit
-//        sourceSize.width: width - borderWidth
-//        sourceSize.height: width - borderWidth
         source: thumbnail.source
         smooth: thumbnail.smooth
         asynchronous: thumbnail.asynchronous

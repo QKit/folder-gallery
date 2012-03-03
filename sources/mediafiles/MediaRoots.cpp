@@ -29,8 +29,7 @@
 
 MediaRoots::MediaRoots(QObject *parent) :
     QObject(parent) {
-    this->thumbnailsDb.setDirPath(this->getAppDataDirPath() + "/.thumbnails");
-    this->thumbnailsDb.refresh();
+    this->thumbnailDb.setDirPath(this->getAppDataDirPath() + "/.thumbnails");
     QStringList imageRoots;
 #if defined(Q_WS_MAEMO_5)
     imageRoots << QDir::homePath();
@@ -58,7 +57,7 @@ MediaRoots::MediaRoots(QObject *parent) :
     foreach (QString imageRoot, imageRoots) {
         if (QDir(imageRoot).isReadable()) {
             MediaDir* newMediaDir = new MediaDir(imageRoot);
-            QObject::connect(newMediaDir, SIGNAL(generateThumbnail(QUrl)), &(this->thumbnailsDb), SLOT(generateThumbnail(QUrl))); // for thumbnail generation
+            QObject::connect(newMediaDir, SIGNAL(generateThumbnail(QUrl)), &(this->thumbnailDb), SLOT(generateThumbnail(QUrl))); // for thumbnail generation
             this->m_list.append(newMediaDir);
         }
     }
@@ -71,17 +70,8 @@ QString MediaRoots::getAppDataDirPath() const {
 #elif defined(Q_WS_HARMATTAN)
     return QDir::homePath() + "/MyDocs";
 #elif defined(Q_OS_SYMBIAN)
-    if (QDir("E:").exists()) // if there is flash card
-        return "E:/data";
-    else // if no flash card
-        return "C:/data";
+    return QDir::currentPath().split("/")[0] + "/data"; // data dir at drive with application
 #else
     return QDir::homePath();
 #endif
-}
-
-
-void MediaRoots::setThumbnailDirPath(const QString dirPath) {
-    this->thumbnailsDb.setDirPath(dirPath);
-    emit thumbnailDirPathChanged();
 }

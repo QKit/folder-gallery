@@ -49,6 +49,7 @@ void MediaThumbnailDb::setDirPath(const QString dirPath) {
     QSqlQuery query(this->db);
     query.exec("CREATE TABLE IF NOT EXISTS thumbnails (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, file_source BLOB, file_modified INT, ready TINYINT)");
     query.exec("CREATE INDEX IF NOT EXISTS file_source_index ON thumbnails(file_source)");
+    emit dirPathChanged();
 }
 
 

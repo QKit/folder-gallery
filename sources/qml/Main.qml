@@ -32,6 +32,9 @@ import "./stack.js" as DirStack
 QKitApplication {
     id: application
 
+    property bool isOnQA: isPayed && (new Date <= new Date(2012,01,10))
+    property bool isPayed: false
+
     MediaRoots { id: mediaRoots }
 
     logController: LogController { }
@@ -90,7 +93,7 @@ QKitApplication {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             font.pixelSize: 0.04 * Math.min(menu.width, menu.height)
-            text: qsTr("by Kirill Chuvilin aka KiRiK for MaemoWorld.ru") + "\n" + qsTr("This is free full-featured version of application.") + "\n" + qsTr("Please pay it in Nokia Store if you liked it \n or want it to be developed.")
+            text: qsTr("by Kirill Chuvilin aka KiRiK for MaemoWorld.ru") + (application.isPayed ? "" : "\n" + qsTr("This is free full-featured version of application.") + "\n" + qsTr("Please pay it in Nokia Store if you liked it \n or want it to be developed."))
             horizontalAlignment: Text.AlignHCenter
             color: "white"
         }]
@@ -109,12 +112,11 @@ QKitApplication {
         }
 
         QKitMenuElement { // goto website button
-//            visible: new Date > new Date(2012,01,10)
-            text: qsTr("Homepage")
-            onClicked: Qt.openUrlExternally(qsTr("https://projects.developer.nokia.com/foldergallery"))
+            text: application.isOnQA ? qsTr("Back") : qsTr("Homepage")
+            onClicked: if (!application.isOnQA) Qt.openUrlExternally(qsTr("https://projects.developer.nokia.com/foldergallery"))
         }
 
-        QKitMenuElement { // goto website button
+        QKitMenuElement { // goto store button
             text: qsTr("Nokia Store")
             onClicked: Qt.openUrlExternally("http://store.ovi.com/content/193179")
         }

@@ -45,6 +45,7 @@ class MediaFile : public QObject {
     Q_PROPERTY(QUrl source READ getSource WRITE setSource NOTIFY sourceChanged) //!< path to file
     Q_PROPERTY(QUrl thumbnail READ getThumbnail NOTIFY thumbnailChanged) //!< path to thumbnail file
     Q_PROPERTY(uint lastModified READ getLastModified NOTIFY sourceChanged) //!< time of last modify
+    Q_PROPERTY(QSize previewSize READ getPreviewSize NOTIFY sourceChanged) //!< size of preview image
 
 public:
     enum Exception { //!< MediaFile exceptions
@@ -101,13 +102,19 @@ public:
      * \param width  max width
      * \param height max height
      */
-    QImage getPreviewImage(int width, int height);
+    QImage getPreviewImage(int width, int height) const;
 
     /*!
      * \brief Returns time of last modify.
      * \return time of last modify in seconds since 1970-01-01T00:00:00, Coordinated Universal Time
      */
-    uint getLastModified() {return this->fileInfo.lastModified().toTime_t();}
+    uint getLastModified() const {return this->fileInfo.lastModified().toTime_t();}
+
+    /*!
+     * \brief Returns size of preview image.
+     * \return size of file preview image or (0,0) if it can't be determined
+     */
+    QSize getPreviewSize() const;
 
     /*!
      * \brief Selects all files with particular source.

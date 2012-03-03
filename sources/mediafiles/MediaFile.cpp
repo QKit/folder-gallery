@@ -55,7 +55,7 @@ QUrl MediaFile::getThumbnail() {
 }
 
 
-QImage MediaFile::getPreviewImage(int width, int height) {
+QImage MediaFile::getPreviewImage(int width, int height) const {
     if (!this->fileInfo.exists()) throw MediaFile::EXCEPTION_ACCESS;
     QImageReader imageReader(this->fileInfo.absoluteFilePath());
     imageReader.setQuality(0);
@@ -64,6 +64,13 @@ QImage MediaFile::getPreviewImage(int width, int height) {
     imageReader.setScaledSize(previewSize);
     imageReader.setBackgroundColor(QColor(0,0,0,0));
     return imageReader.read();
+}
+
+
+QSize MediaFile::getPreviewSize() const {
+    if (!this->fileInfo.exists()) throw MediaFile::EXCEPTION_ACCESS;
+    QImageReader imageReader(this->fileInfo.absoluteFilePath());
+    return imageReader.size();
 }
 
 

@@ -42,8 +42,8 @@ class MediaRoots : public QObject {
 
     Q_PROPERTY(int count READ getCount CONSTANT) //!< number of directories in list
     Q_PROPERTY(QDeclarativeListProperty<MediaDir> list READ getListProperty NOTIFY listChanged) //!< list of directories where images are
-    Q_PROPERTY(QString thumbnailDirPath READ getThumbnailDirPath WRITE setThumbnailDirPath NOTIFY thumbnailDirPathChanged) //!< absolute path to dir with thumbnail files
     Q_PROPERTY(QString appDataDirPath READ getAppDataDirPath CONSTANT) //!< documents directory
+    Q_PROPERTY(MediaThumbnailDb* thumbnailDb READ getThumbnailDb CONSTANT) //!< thumbnails database object
 
 public:
     /*!
@@ -71,30 +71,18 @@ public:
     QDeclarativeListProperty<MediaDir> getListProperty() {return DeclarativeList<MediaDir>::generateProperty(this, &(this->m_list), false, true);}
 
     /*!
-     * \brief Returns absolute path to dir with thumbnail files.
-     * \return absolute path to dir with thumbnail files
-     */
-    QString getThumbnailDirPath() const {return this->thumbnailsDb.getDirPath();}
-
-    /*!
      * \brief Returns absolute path to documents directory.
      * \return absolute path to documents directory of current user
      */
     QString getAppDataDirPath() const;
 
-public slots:
     /*!
-     * \brief Sets dir for thumbnail files.
-     * \param dirPath absolute path to dir
+     * \brief Returns thumbnails database object.
+     * \return link to database object
      */
-    void setThumbnailDirPath(const QString dirPath);
+    MediaThumbnailDb* getThumbnailDb() {return &this->thumbnailDb;}
 
 signals:
-    /*!
-     * Emits when thumbnailDirPath ptoperty changes.
-     */
-    void thumbnailDirPathChanged();
-
     /*!
      * Emits when list of roots changes.
      */
@@ -102,7 +90,7 @@ signals:
 
 private:
     QList<MediaDir*> m_list; //!< directory list
-    MediaThumbnailDb thumbnailsDb; //!< thumbnail generator
+    MediaThumbnailDb thumbnailDb; //!< thumbnail generator
 };
 
 #endif // _MediaRoots_h_

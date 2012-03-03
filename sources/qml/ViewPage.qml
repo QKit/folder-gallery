@@ -44,30 +44,36 @@ QKitPage {
     ListView {
         id: viewPageViewer
 
-        visible: flick.zoom === 1
+        visible: !flick.visible
         anchors.fill: parent
         orientation: "Horizontal"
         snapMode: "SnapOneItem"
         highlightMoveDuration: 0
         highlightMoveSpeed: -1
         highlightRangeMode: ListView.StrictlyEnforceRange // to change currentIndex on moving
-        onCurrentIndexChanged: flick.zoom = 1
+        onCurrentItemChanged: flick.zoom = 1
         delegate: Item {
             id: fileViewer
 
             property url source: viewPage.files[index].source
             property url thumbnail: viewPage.files[index].thumbnail
+            property variant imageSize: viewPage.files[index].previewSize
+            property real resizeScale: Math.min(1, width / imageSize.width, height / imageSize.height)
+            property int imageWidth: imageSize.width * resizeScale
+            property int imageHeight: imageSize.height * resizeScale
 
             width:  viewPage.width
             height:  viewPage.height
 
-            Image { // to view on none zoom
+            Image { // to view while preview loading
                 id: imageThumbnail
 
                 visible: imagePreview.status != Image.Ready
                 anchors.centerIn: parent
-                scale: Math.min(parent.width/width, parent.height/height)
+                width: imageWidth
+                height: imageHeight
                 source: fileViewer.thumbnail
+                fillMode: Image.PreserveAspectFit
                 asynchronous: false
                 smooth: true
             }
@@ -75,12 +81,14 @@ QKitPage {
                 id: imagePreview
 
                 anchors.centerIn: parent
-                scale: Math.min(1, parent.width/width, parent.height/height)
-                sourceSize.width: Math.max(parent.width, parent.height)
-                sourceSize.height: Math.max(parent.width, parent.height)
+                width: imageWidth
+                height: imageHeight
+                sourceSize.width: fileViewer.width // Math.min(400, fileViewer.width)
+                sourceSize.height: fileViewer.height // Math.min(400, fileViewer.height)
                 source: "image://preview/" + fileViewer.source
+                fillMode: Image.PreserveAspectFit
                 asynchronous: true
-                smooth: false
+                smooth: uiController.thumbnailSmooth
             }
         }
 
@@ -113,7 +121,6 @@ QKitPage {
                 contentY = contentHeight - height
             }
         }
-
         function zoomContent() {
             if (zoom != 1) {
                 imageZoomed.scale = imageZoomed.minScale * flick.zoom
@@ -121,15 +128,15 @@ QKitPage {
         }
 
         visible: (imageZoomed.status == Image.Ready) &&  (flick.zoom !== 1)
-        z: 2
         anchors.fill: parent
+        z: 2
         contentWidth: imageZoomed.width * imageZoomed.scale
         contentHeight: imageZoomed.height * imageZoomed.scale
         onZoomChanged: {
             if (zoom < 1)
                 zoom = 1 // minimum zoom
-            else if (zoom > 2)
-                zoom = 2 // maximum zoom
+            else if (zoom > 4)
+                zoom = 4 // maximum zoom
         }
         onVisibleChanged: {
             viewPage.toolbar.visible = !visible
@@ -155,14 +162,14 @@ QKitPage {
             anchors.centerIn: parent
             sourceSize.width: flick.width * 2
             sourceSize.height: flick.height * 2
-            source: (viewPage.files && (viewPage.iCurrentFile >= 0) ? "image://preview/" + viewPage.files[viewPage.iCurrentFile].source : "")
-            smooth: true
+            source: flick.zoom == 1 ? "" : "image://preview/" + viewPageViewer.currentItem.source
+            smooth: uiController.thumbnailSmooth
             asynchronous: true
         }
     }
 
     QKitDialogButton { // zoom in button
-        width: 0.8 * viewPage.toolbar.height
+        width: 0.06 * Math.max(parent.height, parent.width)
         height: width
         z: 3
         anchors.right: parent.right
@@ -177,7 +184,7 @@ QKitPage {
     }
 
     QKitDialogButton { // zoom out button
-        width: 0.8 * viewPage.toolbar.height
+        width: 0.06 * Math.max(parent.height, parent.width)
         height: width
         z: 3
         anchors.right: parent.right

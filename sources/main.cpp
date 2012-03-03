@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
 
     qmlRegisterType<MediaFile>("MediaFile", 1, 0, "MediaFile");
     qmlRegisterType<MediaDir>("MediaDir", 1, 0, "MediaDir");
+    qmlRegisterType<MediaThumbnailDb>("MediaThumbnailDb", 1, 0, "MediaThumbnailDb");
     qmlRegisterType<MediaRoots>("MediaRoots", 1, 0, "MediaRoots");
 
     viewer.engine()->addImageProvider(QLatin1String("preview"), new MediaPreviewImageProvider);
