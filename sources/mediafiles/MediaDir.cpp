@@ -37,8 +37,8 @@ MediaDir::MediaDir(QString path, QString name, QObject *parent) :
 
 
 QList<MediaFile*> MediaDir::getFiles() {
-    if (this->m_files.isEmpty()) // wasn't recalculated or really empty
-        this->refreshFiles(); // recalculate list
+    if (this->m_dir.path().isNull()) return QList<MediaFile*>(); // return empty list if is null
+    if (this->m_files.isEmpty()) this->refreshFiles(); // recalculate list if wasn't recalculated or really empty
     return this->m_files;
 }
 
@@ -50,8 +50,8 @@ QDeclarativeListProperty<MediaFile> MediaDir::getFilesProperty() {
 
 
 QList<MediaDir*> MediaDir::getDirs() {
-    if (this->m_dirs.isEmpty()) // wasn't recalculated or really empty
-        this->refreshDirs(); // recalculate list
+    if (this->m_dir.path().isNull()) return QList<MediaDir*>(); // return empty list if is null
+    if (this->m_dirs.isEmpty()) this->refreshDirs(); // recalculate list if wasn't recalculated or really empty
     return this->m_dirs;
 }
 
@@ -96,7 +96,7 @@ void MediaDir::refreshThumbnails(int depth) {
 void MediaDir::refreshFiles() {
     this->m_files.clear(); // clears previos list
     QStringList mediaNames;
-    mediaNames << "*.jpg" << "*.png" << "*.gif" << "*.bmp";
+    mediaNames << "*.jpg" << "*.png" << "*.gif" << "*.bmp" << "*.svg";
     QStringList fileNames = this->m_dir.entryList(mediaNames, QDir::Files | QDir::Readable);
     foreach (QString fileName, fileNames) { // for all file names
         MediaFile* newMediaFile = new MediaFile(this->m_dir.absoluteFilePath(fileName), this); // media file for path

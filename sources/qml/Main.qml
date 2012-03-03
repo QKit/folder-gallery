@@ -76,8 +76,8 @@ QKitApplication {
             application.state = "folder"
         }
         onViewFileToggled: {
+            viewPage.files = folderPage.dir.files
             viewPage.iCurrentFile = index
-            viewPage.dir = folderPage.dir
             application.state = "view"
         }
         onMenuToggled: menu.active = true
@@ -94,22 +94,15 @@ QKitApplication {
         id: menu
         objectName: "Menu"
 
-        QKitMenuElement { // goto website button
-            text: qsTr("Homepage")
-            onClicked: Qt.openUrlExternally(qsTr("https://projects.developer.nokia.com/foldergallery"))
-        }
-        QKitMenuElement { // exit button
-            text: qsTr("Quit")
-            onClicked: Qt.quit()
-        }
         children: [Text {
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.bottom: parent.bottom
             font.pixelSize: 0.04 * Math.min(menu.width, menu.height)
-            text: "by Kirill Chuvilin aka KiRiK for MaemoWorld.ru"
+            text: qsTr("by Kirill Chuvilin aka KiRiK for MaemoWorld.ru") + "\n" + qsTr("This is free full-featured version of application.") + "\n" + qsTr("Please pay it in Nokia Store if you liked it \n or want it to be developed.")
+            horizontalAlignment: Text.AlignHCenter
             color: "white"
         }]
-
         onClosed: {
             switch (application.state) {
             case "home":
@@ -122,6 +115,22 @@ QKitApplication {
                 viewPage.forceActiveFocus()
                 break
             }
+        }
+
+        QKitMenuElement { // goto website button
+//            visible: new Date > new Date(2012,01,3)
+            text: qsTr("Homepage")
+            onClicked: Qt.openUrlExternally(qsTr("https://projects.developer.nokia.com/foldergallery"))
+        }
+
+        QKitMenuElement { // goto website button
+            text: qsTr("Nokia Store")
+            onClicked: Qt.openUrlExternally("http://store.ovi.com/content/193179")
+        }
+
+        QKitMenuElement { // exit button
+            text: qsTr("Quit")
+            onClicked: Qt.quit()
         }
     }
 
@@ -194,4 +203,11 @@ QKitApplication {
 
     // todo: why does focus goes to menuview?
     Component.onCompleted: forceActiveFocus()
+
+
+//    Text {
+//        anchors.left: parent.left
+//        anchors.top: parent.top
+//        text: qsTr(new Date + ", " + new Date(2012,00,31,23,52))
+//    }
 }

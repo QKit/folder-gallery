@@ -50,7 +50,7 @@ MediaRoots::MediaRoots(QObject *parent) :
     imageRoots << "E:";
     imageRoots << "E:/Images";
 #elif defined(Q_WS_WIN)
-//    imageRoots << QDir::homePath();
+    imageRoots << QDir::homePath();
     imageRoots << QDir::homePath() + "/Pictures";
 #else
     imageRoots << QDir::homePath();

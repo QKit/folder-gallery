@@ -40,16 +40,15 @@ void MediaThumbnailDb::setDirPath(const QString dirPath) {
     if (this->db.isOpen()) this->db.close(); // close opened
     QDir::root().mkpath(dirPath); // to be sure that path exists
     this->dir.setPath(dirPath);
-    QString dbFileName = dirPath + "/thumbnailDB.sqlite"; // path to db file
-    this->db.setDatabaseName(dbFileName); //
-    if (QFile::exists(dbFileName)) { // if database exists
-        this->db.open(); // just open it
-    } else { // if there was no database
-        this->db.open();
-        QSqlQuery query(this->db);
-        query.exec("CREATE TABLE thumbnails (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, file_source BLOB, file_modified INT, ready TINYINT)");
-        query.exec("CREATE INDEX file_source_index ON thumbnails(file_source)");
-    }
+#if defined(Q_OS_SYMBIAN)
+    this->db.setDatabaseName("thumbnailDB.sqlite");
+#else
+    this->db.setDatabaseName(dirPath + "/thumbnailDB.sqlite");
+#endif
+    this->db.open();
+    QSqlQuery query(this->db);
+    query.exec("CREATE TABLE IF NOT EXISTS thumbnails (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, file_source BLOB, file_modified INT, ready TINYINT)");
+    query.exec("CREATE INDEX IF NOT EXISTS file_source_index ON thumbnails(file_source)");
 }
 
 

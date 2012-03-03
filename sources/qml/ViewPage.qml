@@ -31,56 +31,178 @@ import MediaDir 1.0
 QKitPage {
     id: viewPage
 
-    property MediaDir dir: mediaRoots.list[0] // source directory
+    property alias files: viewPageViewer.model
     property alias iCurrentFile: viewPageViewer.currentIndex
 
+    Keys.onRightPressed: viewPageViewer.incrementCurrentIndex()
+    Keys.onLeftPressed: viewPageViewer.decrementCurrentIndex()
     toolbar: QKitToolbar {
         leftButton: QKitToolbarBackButton { onClicked: viewPage.backToggled() }
         rightButton: QKitToolbarMenuButton { onClicked: viewPage.menuToggled() }
     }
 
-    Keys.onRightPressed: viewPageViewer.incrementCurrentIndex()
-    Keys.onLeftPressed: viewPageViewer.decrementCurrentIndex()
-
     ListView {
         id: viewPageViewer
 
+        visible: flick.zoom === 1
         anchors.fill: parent
         orientation: "Horizontal"
         snapMode: "SnapOneItem"
+        onCurrentIndexChanged: flick.zoom = 1
+        onContentXChanged: currentIndex = contentX / width
         highlightMoveDuration: 0
         highlightMoveSpeed: -1
         delegate: Item {
+            id: file
+
+            property url source: viewPage.files[index].source
+            property url thumbnail: viewPage.files[index].thumbnail
+
             width:  viewPage.width
             height:  viewPage.height
-            Image { // to view while image loading
-                visible: image.status != Image.Ready
+            Image {
+                // to view while image loading
+                visible: !imagePreview.visible && !imageZoomed.visible
                 anchors.centerIn: parent
                 scale: Math.min(viewPage.width / sourceSize.width, viewPage.height / sourceSize.height)
-                source: viewPageViewer.model[index].thumbnail
+                source: file.thumbnail
                 asynchronous: false
             }
             Image { // to view on none zoom
-                id: image
-                visible: status == Image.Ready
+                id: imagePreview
+
+                property bool resized: false // ready resize or not
+
+                visible: (status == Image.Ready) && resized && (flick.zoom === 1)
                 anchors.centerIn: parent
-                source: viewPageViewer.model[index].source
+                source: file.source
                 scale: Math.min(1, viewPage.width / sourceSize.width, viewPage.height / sourceSize.height)
                 asynchronous: true
+                onSourceChanged: resized = false
                 onStatusChanged: {
                     if (status == Image.Ready) {
                         var resizeScale = Math.min(1, Math.max(viewPage.width, viewPage.height) / Math.min(sourceSize.width, sourceSize.height))
                         sourceSize.width *= resizeScale
                         sourceSize.height *= resizeScale
+                        resized = true
                     }
                 }
+
             }
         }
-        model: viewPage.dir.files
 
         MouseArea { // for toolbar removing
             anchors.fill: parent
             onClicked: viewPage.toolbar.active = !viewPage.toolbar.active // reactivate toolbar
+        }
+    }
+
+    Flickable {
+        id: flick
+
+        property real zoom: 1
+
+        function fixContentX() {
+            if (contentWidth < width) {
+                contentX = - (width - contentWidth) / 2
+            } else if (contentX < 0) {
+                contentX = 0
+            } else if (contentX > contentWidth - width) {
+                contentX = contentWidth - width
+            }
+        }
+        function fixContentY() {
+            if (contentHeight < height) {
+                contentY = - (height - contentHeight) / 2
+            } else if (contentY < 0) {
+                contentY = 0
+            } else if (contentY > contentHeight - height) {
+                contentY = contentHeight - height
+            }
+        }
+
+        function zoomContent() {
+            if (zoom != 1) {
+                var newWidth = imageZoomed.sourceSize.width * imageZoomed.minScale * flick.zoom
+                var newHeight = imageZoomed.sourceSize.height * imageZoomed.minScale * flick.zoom
+                var centerX = flick.contentWidth / 2
+                var centerY = flick.contentHeight / 2
+                flick.resizeContent(newWidth, newHeight, Qt.point(centerX, centerY))
+            }
+        }
+
+        visible: (imageZoomed.status == Image.Ready) &&  (flick.zoom !== 1)
+        z: 2
+        anchors.fill: parent
+        onZoomChanged: {
+            if (zoom < 1)
+                zoom = 1
+            else if (zoom > 5)
+                zoom = 5
+        }
+        onVisibleChanged: {
+            viewPage.toolbar.visible = !visible
+            if (visible) { // start of zooming
+                flick.contentWidth = imageZoomed.sourceSize.width * imageZoomed.minScale * flick.zoom
+                flick.contentHeight = imageZoomed.sourceSize.height * imageZoomed.minScale * flick.zoom
+                flick.contentX = - (flick.width - flick.contentWidth) / 2
+                flick.contentY = - (flick.height - flick.contentHeight) / 2
+            }
+        }
+        onWidthChanged: fixContentX()
+        onHeightChanged: fixContentY()
+        onContentXChanged: fixContentX()
+        onContentYChanged: fixContentY()
+        onContentWidthChanged: fixContentX()
+        onContentHeightChanged: fixContentY()
+
+        Image { // to view full image on zoom
+            id: imageZoomed
+
+            property real minScale: Math.min(1, viewPage.width / sourceSize.width, viewPage.height / sourceSize.height)
+
+            width: flick.contentWidth
+            height: flick.contentHeight
+            source: (viewPage.files && (viewPage.iCurrentFile >= 0) ? viewPage.files[viewPage.iCurrentFile].source : "")
+            smooth: false
+            asynchronous: true
+        }
+    }
+
+//    Text {
+//        anchors.left: parent.left
+//        anchors.top: parent.top
+//        text: "flick.contentX: " + flick.contentX + ", flick.contentY: " + flick.contentY
+//    }
+
+
+    QKitDialogButton { // zoom in button
+        width: 0.8 * viewPage.toolbar.height
+        height: width
+        z: 3
+        anchors.right: parent.right
+        anchors.rightMargin: 0.2 * width
+        anchors.bottom: parent.verticalCenter
+        anchors.bottomMargin: 0.2 * height
+        imageSource: "images/icon-m-camera-zoom-in.svg"
+        onClicked: {
+            flick.zoom += 0.2
+            flick.zoomContent()
+        }
+    }
+
+    QKitDialogButton { // zoom out button
+        width: 0.8 * viewPage.toolbar.height
+        height: width
+        z: 3
+        anchors.right: parent.right
+        anchors.rightMargin: 0.2 * width
+        anchors.top: parent.verticalCenter
+        anchors.topMargin: 0.2 * height
+        imageSource: "images/icon-m-camera-zoom-out.svg"
+        onClicked: {
+            flick.zoom -= 0.2
+            flick.zoomContent()
         }
     }
 }
