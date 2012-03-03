@@ -24,7 +24,7 @@
 *                                                                              *
 *******************************************************************************/
 
-import QtQuick 1.0
+import Qt 4.7
 
 Item {
     property bool buttonSmooth: true // use smooth for buttons or not

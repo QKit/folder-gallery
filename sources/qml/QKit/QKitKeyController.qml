@@ -24,7 +24,7 @@
 *                                                                              *
 *******************************************************************************/
 
-import QtQuick 1.0
+import Qt 4.7
 
 Item {
     property int navMoveLeftKey: Qt.Key_Left // key for left moving in nav items

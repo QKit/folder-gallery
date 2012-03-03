@@ -8,7 +8,7 @@ Homepage: http://MaemoWorld.ru/wiki/index.php?title=Folder_Gallery
 
 Package: foldergallery
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, qtquickcompat (>= 0.1.0)
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Image viewer, based on folder structure.
  Folder Gallery is an application that allows you to view images according to the logic of device's file system. It provides an interface to select the folder you are interested in, view thumbnail images in it, and full-screen viewing of each image.
 XB-Maemo-Display-Name: Folder Gallery

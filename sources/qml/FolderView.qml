@@ -24,7 +24,7 @@
 *                                                                              *
 *******************************************************************************/
 
-import QtQuick 1.0
+import Qt 4.7
 import "QKit"
 import MediaFile 1.0
 import MediaDir 1.0

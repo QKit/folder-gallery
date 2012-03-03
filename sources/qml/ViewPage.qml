@@ -24,7 +24,7 @@
 *                                                                              *
 *******************************************************************************/
 
-import QtQuick 1.0
+import Qt 4.7
 import "QKit"
 import MediaDir 1.0
 
@@ -50,13 +50,10 @@ QKitPage {
         snapMode: "SnapOneItem"
         highlightMoveDuration: 0
         highlightMoveSpeed: -1
+        highlightRangeMode: ListView.StrictlyEnforceRange // to change currentIndex on moving
         onCurrentIndexChanged: flick.zoom = 1
-        onContentXChanged: {
-            var newCurrentIndex = contentX / width
-            if (Math.abs(newCurrentIndex - currentIndex) >= 0.95) currentIndex = newCurrentIndex
-        }
         delegate: Item {
-            id: file
+            id: fileViewer
 
             property url source: viewPage.files[index].source
             property url thumbnail: viewPage.files[index].thumbnail
@@ -67,24 +64,27 @@ QKitPage {
                 // to view while image loading
                 visible: !imagePreview.visible && !imageZoomed.visible
                 anchors.centerIn: parent
-                scale: Math.min(viewPage.width / sourceSize.width, viewPage.height / sourceSize.height)
-                source: file.thumbnail
+                scale: Math.min(fileViewer.width / sourceSize.width, fileViewer.height / sourceSize.height)
+                source: fileViewer.thumbnail
                 asynchronous: false
             }
             Image { // to view on none zoom
                 id: imagePreview
 
                 property bool resized: false // ready resize or not
+                property bool isOutOfBounds: sourceSize.width > parent.width || sourceSize.height > parent.height // is image bigget than page
 
                 visible: (status == Image.Ready) && resized && (flick.zoom === 1)
                 anchors.centerIn: parent
-                source: file.source
-                scale: Math.min(1, viewPage.width / sourceSize.width, viewPage.height / sourceSize.height)
+                width: (isOutOfBounds ? parent.width : sourceSize.width)
+                height: (isOutOfBounds ? parent.height : sourceSize.height)
+                fillMode: (isOutOfBounds ? Image.PreserveAspectFit : Image.PreserveAspectCrop)
+                source: fileViewer.source
                 asynchronous: true
                 onSourceChanged: resized = false
                 onStatusChanged: {
                     if (status == Image.Ready) {
-                        var resizeScale = Math.min(1, Math.max(viewPage.width, viewPage.height) / Math.min(sourceSize.width, sourceSize.height))
+                        var resizeScale = Math.min(1, Math.max(fileViewer.width, fileViewer.height) / Math.min(sourceSize.width, sourceSize.height)) // best scale for current width and height and rotations
                         sourceSize.width *= resizeScale
                         sourceSize.height *= resizeScale
                         resized = true

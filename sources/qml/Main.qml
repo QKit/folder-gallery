@@ -24,7 +24,7 @@
 *                                                                              *
 *******************************************************************************/
 
-import QtQuick 1.0
+import Qt 4.7
 import "QKit"
 import MediaRoots 1.0
 import "./stack.js" as DirStack
