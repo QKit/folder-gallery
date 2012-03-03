@@ -39,7 +39,6 @@
 class MediaDir : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(bool isDir READ isDir CONSTANT) //!< indicates dir or file
     Q_PROPERTY(bool isNull READ isNull NOTIFY sourceChanged) //!< indicates that dir is null dir
     Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged) //!< name of directory
     Q_PROPERTY(QUrl source READ getSource WRITE setSource NOTIFY sourceChanged) //!< path to directory
@@ -47,8 +46,6 @@ class MediaDir : public QObject {
     Q_PROPERTY(QDeclarativeListProperty<MediaFile> files READ getFilesProperty NOTIFY filesChanged) //!< files
     Q_PROPERTY(int dirsCount READ getDirsCount NOTIFY dirsChanged) //!< number of subdirs
     Q_PROPERTY(QDeclarativeListProperty<MediaDir> dirs READ getDirsProperty NOTIFY dirsChanged) //!< subdirs
-    Q_PROPERTY(int contentCount READ getContentCount NOTIFY contentChanged) //!< number of files and subdirs
-    Q_PROPERTY(QDeclarativeListProperty<QObject> content READ getContentProperty NOTIFY contentChanged) //!< files and subdirs
 
 public:
     /*!
@@ -58,12 +55,6 @@ public:
      * \param parent parent object
      */
     explicit MediaDir(QString path = QString::null, QString name = QString::null, QObject *parent = 0);
-
-    /*!
-     * \brief To indicate dir or file.
-     * \return true
-     */
-    static bool isDir() {return true;}
 
     /*!
      * \brief Indicates null dir or not.
@@ -125,18 +116,6 @@ public:
      */
     QDeclarativeListProperty<MediaDir> getDirsProperty();
 
-    /*!
-     * \brief Returns number of files and subdirs in directory.
-     * \return number of files and subdirs
-     */
-    int getContentCount();
-
-    /*!
-     * \brief Returns files and subdirs.
-     * \return list property with files and subdirs
-     */
-    QDeclarativeListProperty<QObject> getContentProperty();
-
 public slots:
     /*!
      * \brief Sets name of directory.
@@ -184,11 +163,6 @@ signals:
     void dirsChanged();
 
     /*!
-     * \brief Emited when content property changes.
-     */
-    void contentChanged();
-
-    /*!
      * \brief Emited when new thumbnail is needed.
      * \param source url to file source
      */
@@ -199,7 +173,6 @@ private:
     QDir m_dir; //!< directory object
     QList<MediaFile*> m_files; //!< files
     QList<MediaDir*> m_dirs; //!< dirs
-    QList<QObject*> m_content; //!< dirs
 
 private slots:
     /*!
@@ -211,10 +184,5 @@ private slots:
      * \brief Recalculates dir list.
      */
     void refreshDirs();
-
-    /*!
-     * \brief Recalculates content list.
-     */
-    void refreshContent();
 };
 #endif // _MediaDir_h_

@@ -41,7 +41,6 @@
 class MediaFile : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(bool isDir READ isDir CONSTANT) //!< indicates dir or file
     Q_PROPERTY(QString name READ getName NOTIFY sourceChanged) //!< name of file
     Q_PROPERTY(QUrl source READ getSource WRITE setSource NOTIFY sourceChanged) //!< path to file
     Q_PROPERTY(QUrl thumbnail READ getThumbnail NOTIFY thumbnailChanged) //!< path to thumbnail file
@@ -72,12 +71,6 @@ public:
      * \param parent parent object
      */
     ~MediaFile();
-
-    /*!
-     * \brief To indicate dir or file.
-     * \return false
-     */
-    static bool isDir() {return false;}
 
     /*!
      * \brief Returns name of file.

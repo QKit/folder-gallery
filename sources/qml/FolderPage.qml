@@ -32,6 +32,7 @@ QKitPage {
     id: folderPage
 
     property MediaDir dir: mediaRoots.list[0] // source directory  // todo: find another default dir
+    property alias currentIndex: folderView.currentIndex
 
     signal viewFileToggled(variant file, int index) // goto file view
     signal viewFolderToggled(variant dir, int index) // goto folder page
@@ -47,9 +48,10 @@ QKitPage {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: parent.toolbar.top
-        model: folderPage.dir.content
+        dirs: folderPage.dir.dirs
+        files: folderPage.dir.files
         onFolderClicked: folderPage.viewFolderToggled(dir, index)
-        onFileClicked: folderPage.viewFileToggled(file, index - dir.dirsCount)
+        onFileClicked: folderPage.viewFileToggled(file, index)
     }
 
     onFocusChanged: folderView.focus = focus

@@ -46,11 +46,10 @@ MediaFile::~MediaFile() {
     mediaFiles.remove(this->getSource(), this); // remove from file list
 }
 
+
 QUrl MediaFile::getThumbnail() {
-    if (this->thumbnailPath.isNull()) { // thumbnail isn't defined
-        emit generateThumbnail(this->getSource()); // signal to generate thumbnail for file
-    }
-    return QUrl::fromLocalFile(this->thumbnailPath); // path to thumbnail
+    if (this->thumbnailPath.isNull()) emit generateThumbnail(this->getSource()); // signal to generate thumbnail for file if thumbnail isn't defined
+    return this->thumbnailPath.isNull() ? QUrl(""): QUrl::fromLocalFile(this->thumbnailPath); // path to thumbnail
 }
 
 

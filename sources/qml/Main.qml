@@ -76,8 +76,8 @@ QKitApplication {
             application.state = "folder"
         }
         onViewFileToggled: {
-            viewPage.dir = folderPage.dir
             viewPage.iCurrentFile = index
+            viewPage.dir = folderPage.dir
             application.state = "view"
         }
         onMenuToggled: menu.active = true

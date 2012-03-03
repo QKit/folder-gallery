@@ -33,8 +33,6 @@ MediaDir::MediaDir(QString path, QString name, QObject *parent) :
         this->setPath(path);
     if (!name.isNull())
         this->setName(name);
-    this->connect(this, SIGNAL(filesChanged()), SIGNAL(contentChanged()));
-    this->connect(this, SIGNAL(dirsChanged()), SIGNAL(contentChanged()));
 }
 
 
@@ -61,20 +59,6 @@ QList<MediaDir*> MediaDir::getDirs() {
 QDeclarativeListProperty<MediaDir> MediaDir::getDirsProperty() {
     this->getDirs(); // prepare dirs
     return DeclarativeList<MediaDir>::generateProperty(this, &m_dirs, false, true);
-}
-
-
-int MediaDir::getContentCount() {
-    if (this->m_content.isEmpty()) // wasn't recalculated or really empty
-        this->refreshContent(); // recalculate list
-    return this->m_content.count();
-}
-
-
-QDeclarativeListProperty<QObject> MediaDir::getContentProperty() {
-    if (this->m_content.isEmpty()) // wasn't recalculated or really empty
-        this->refreshContent(); // recalculate list
-    return DeclarativeList<QObject>::generateProperty(this, &m_content, false, true);
 }
 
 
@@ -130,15 +114,4 @@ void MediaDir::refreshDirs() {
         QObject::connect(newMediaDir, SIGNAL(generateThumbnail(QUrl)), this, SIGNAL(generateThumbnail(QUrl))); // for thumbnail generation
         this->m_dirs.append(newMediaDir);
     }
-}
-
-
-void MediaDir::refreshContent() {
-    this->m_content.clear(); // clears previos list
-    this->getDirs();
-    foreach (MediaDir* mediaDir, this->m_dirs)
-        this->m_content.append(mediaDir);
-    this->getFiles();
-    foreach (MediaFile* mediaFile, this->m_files)
-        this->m_content.append(mediaFile);
 }

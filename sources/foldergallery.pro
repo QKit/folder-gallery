@@ -13,7 +13,7 @@ QML_IMPORT_PATH =
 # 0x2002CCCF value if protected UID is given to the application
 #symbian:DEPLOYMENT.installer_header = 0x2002CCCF
 
-VERSION = 1.6.4
+VERSION = 1.6.7
 
 symbian {
     TARGET.UID3 = 0x2004a654

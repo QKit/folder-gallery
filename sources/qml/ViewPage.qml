@@ -32,7 +32,12 @@ QKitPage {
     id: viewPage
 
     property MediaDir dir: mediaRoots.list[0] // source directory
-    property int iCurrentFile: 0
+    property alias iCurrentFile: viewPageViewer.currentIndex
+
+    toolbar: QKitToolbar {
+        leftButton: QKitToolbarBackButton { onClicked: viewPage.backToggled() }
+        rightButton: QKitToolbarMenuButton { onClicked: viewPage.menuToggled() }
+    }
 
     Keys.onRightPressed: viewPageViewer.incrementCurrentIndex()
     Keys.onLeftPressed: viewPageViewer.decrementCurrentIndex()
@@ -45,7 +50,6 @@ QKitPage {
         snapMode: "SnapOneItem"
         highlightMoveDuration: 0
         highlightMoveSpeed: -1
-        currentIndex: viewPage.iCurrentFile
         delegate: Item {
             width:  viewPage.width
             height:  viewPage.height
@@ -71,14 +75,6 @@ QKitPage {
                     }
                 }
             }
-//            Rectangle { // status bar
-//                visible: image.status == Image.Loading
-//                anchors.left: parent.left
-//                anchors.bottom: parent.bottom
-//                height: 0.02 * parent.height
-//                color: "white"
-//                width: image.progress * parent.width
-//            }
         }
         model: viewPage.dir.files
 
@@ -86,11 +82,5 @@ QKitPage {
             anchors.fill: parent
             onClicked: viewPage.toolbar.active = !viewPage.toolbar.active // reactivate toolbar
         }
-    }
-
-
-    toolbar: QKitToolbar {
-        leftButton: QKitToolbarBackButton { onClicked: viewPage.backToggled() }
-        rightButton: QKitToolbarMenuButton { onClicked: viewPage.menuToggled() }
     }
 }
