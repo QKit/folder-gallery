@@ -32,6 +32,7 @@ QKitPage {
     id: homePage
 
     signal openFolderToggled(variant dir, int index) // goto folder page
+    property alias dirs: folderView.dirs
     property alias currentIndex: folderView.currentIndex
 
     toolbar: QKitToolbar {
@@ -44,7 +45,6 @@ QKitPage {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: parent.toolbar.top
-        dirs: mediaRoots.list
         onFolderClicked: homePage.openFolderToggled(dir, index) // to go to folder page
     }
 

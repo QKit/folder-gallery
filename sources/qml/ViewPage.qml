@@ -48,10 +48,13 @@ QKitPage {
         anchors.fill: parent
         orientation: "Horizontal"
         snapMode: "SnapOneItem"
-        onCurrentIndexChanged: flick.zoom = 1
-        onContentXChanged: currentIndex = contentX / width
         highlightMoveDuration: 0
         highlightMoveSpeed: -1
+        onCurrentIndexChanged: flick.zoom = 1
+        onContentXChanged: {
+            var newCurrentIndex = contentX / width
+            if (Math.abs(newCurrentIndex - currentIndex) >= 0.95) currentIndex = newCurrentIndex
+        }
         delegate: Item {
             id: file
 
@@ -127,7 +130,8 @@ QKitPage {
                 var newHeight = imageZoomed.sourceSize.height * imageZoomed.minScale * flick.zoom
                 var centerX = flick.contentWidth / 2
                 var centerY = flick.contentHeight / 2
-                flick.resizeContent(newWidth, newHeight, Qt.point(centerX, centerY))
+                contentWidth = newWidth
+                contentHeight = newHeight
             }
         }
 

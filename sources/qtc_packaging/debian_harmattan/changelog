@@ -1,3 +1,12 @@
+foldergallery (1.7.3) stable; urgency=low
+
+  * Bugfixes.
+  * QKit 0.4.3.
+
+ -- Kirill Chuvilin <kirill.chuvilin@gmail.com> Wed, 03 Fri 2012 00:01:57 +0400
+
+
+
 foldergallery (1.7.2) stable; urgency=low
 
   * Zooming

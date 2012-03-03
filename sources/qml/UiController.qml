@@ -1,6 +1,6 @@
 /*******************************************************************************
 *                                                                              *
-*  Main item adaptor for PC implementation.                                    *
+*  UiController item implementation.                                           *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
@@ -24,22 +24,8 @@
 *                                                                              *
 *******************************************************************************/
 
-import QtQuick 1.0
 import "QKit"
 
-Item {
-    width: 800
-    height: 480
-    Main {
-        anchors.fill: parent
-        uiController: QKitUiController {
-            mouseHoverEnabled: false
-            buttonSmooth: false
-            thumbnailSmooth: false
-            pageTexture: "images/alder_pre.jpg"
-        }
-        keyController: QKitKeyController {
-            buttonPressKey: Qt.Key_Enter
-        }
-    }
+QKitUiController {
+    pageTexture: "images/alder_pre.jpg"
 }

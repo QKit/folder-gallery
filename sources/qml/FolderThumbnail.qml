@@ -26,13 +26,12 @@
 
 import QtQuick 1.0
 import "QKit"
-import MediaDir 1.0
 
 QKitItem {
     id: folderThumbnail
     objectName: "QKitFolderThumbnail"
 
-    property MediaDir sourceDir // folder directory
+    property variant sourceDir // folder directory
     property color textColor: uiController.thumbnailBorderColor
     property color textColorSelected: uiController.thumbnailBorderColorSelected
 
@@ -71,23 +70,16 @@ QKitItem {
                 }
             }
             QKitThumbnail {
-                visible: Qt.isQtObject(sourceDir) && sourceDir.files.length > 0
+                property bool isDirEmpty: !(Qt.isQtObject(sourceDir) && sourceDir.files.length > 0)
+
                 selected: folderThumbnail.selected
                 anchors.centerIn: parent
                 width: 0.9 * parent.width
                 height: 0.9 * parent.height
-                source: Qt.isQtObject(sourceDir) && sourceDir.files.length > 0 ? sourceDir.files[0].thumbnail : ""
-            }
-            QKitThumbnail {
-                visible: Qt.isQtObject(sourceDir) && sourceDir.files.length === 0
-                selected: folderThumbnail.selected
-                anchors.centerIn: parent
-                width: 0.9 * parent.width
-                height: 0.9 * parent.height
-                source: "images/icon-m-common-directory.png"
-                backgroundColor: "#00000000"
-                backgroundColorSelected: backgroundColor
-                borderColor: "#00000000"
+                source: isDirEmpty ? "images/icon-m-common-directory.png" : sourceDir.files[0].thumbnail
+                backgroundColor: isDirEmpty ? "#00000000" : uiController.thumbnailBackgroundColor
+                backgroundColorSelected: isDirEmpty ? backgroundColor : uiController.thumbnailBorderColor
+                borderColor: isDirEmpty ? "#00000000" : uiController.thumbnailBorderColor
             }
         }
 

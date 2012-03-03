@@ -27,19 +27,15 @@
 import QtQuick 1.0
 import "QKit"
 
-Item {
+Main {
     width: 854
     height: 480
-    Main {
-        anchors.fill: parent
-        uiController: QKitUiController {
-            mouseHoverEnabled: true
-            buttonSmooth: true
-            thumbnailSmooth: true
-            pageTexture: "images/alder_pre.jpg"
-        }
-        keyController: QKitKeyController {
-            buttonPressKey: Qt.Key_Return
-        }
+    uiController: UiController {
+        mouseHoverEnabled: true
+        buttonSmooth: true
+        thumbnailSmooth: true
+    }
+    keyController: QKitKeyController {
+        buttonPressKey: Qt.Key_Return
     }
 }

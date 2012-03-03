@@ -27,14 +27,10 @@
 import QtQuick 1.0
 import "QKit"
 
-Item {
-    Main {
-        anchors.fill: parent
-        uiController: QKitUiController {
-            mouseHoverEnabled: false
-            buttonSmooth: false
-            thumbnailSmooth: false
-            pageTexture: "images/alder_pre.jpg"
-        }
+Main {
+    uiController: UiController {
+        mouseHoverEnabled: false
+        buttonSmooth: false
+        thumbnailSmooth: false
     }
 }

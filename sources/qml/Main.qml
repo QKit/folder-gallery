@@ -34,22 +34,13 @@ QKitApplication {
 
     MediaRoots { id: mediaRoots }
 
-    logController: QKitLogController {
-        parentLogging: true
-//        createdLogging: true
-//        activeLogging: true
-//        selectedLogging: true
-//        activeFocusLogging: true
-//        focusLogging: true
-    }
+    logController: LogController { }
 
-    uiController: QKitUiController {
-        pageTexture: "images/alder_pre.jpg"
-    }
-
-    HomePage { // page with all folders
+    HomePage { // page with all media roots
         id: homePage
         objectName: "HomePage"
+
+        dirs: mediaRoots.list
 
         onOpenFolderToggled: {
             folderPage.dir = dir
@@ -203,11 +194,4 @@ QKitApplication {
 
     // todo: why does focus goes to menuview?
     Component.onCompleted: forceActiveFocus()
-
-
-//    Text {
-//        anchors.left: parent.left
-//        anchors.top: parent.top
-//        text: qsTr(new Date + ", " + new Date(2012,00,31,23,52))
-//    }
 }

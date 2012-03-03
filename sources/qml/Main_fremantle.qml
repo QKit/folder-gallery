@@ -1,6 +1,6 @@
 /*******************************************************************************
 *                                                                              *
-*  Main item adaptor for Harmattan implementation.                             *
+*  Main item adaptor for PC implementation.                                    *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
@@ -24,19 +24,18 @@
 *                                                                              *
 *******************************************************************************/
 
-import com.nokia.meego 1.0
+import QtQuick 1.0
 import "QKit"
 
-Window {
-    Main {
-        anchors.fill: parent
-        uiController: UiController {
-            mouseHoverEnabled: false
-            buttonSmooth: true
-            thumbnailSmooth: false
-        }
-        keyController: QKitKeyController {
-            buttonPressKey: Qt.Key_Return
-        }
+Main {
+    width: 800
+    height: 480
+    uiController: UiController {
+        mouseHoverEnabled: false
+        buttonSmooth: false
+        thumbnailSmooth: false
+    }
+    keyController: QKitKeyController {
+        buttonPressKey: Qt.Key_Enter
     }
 }

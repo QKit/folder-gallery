@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 
 #if defined(Q_WS_MAEMO_5)
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_maemo_5.qml"));
+    viewer.setMainQmlFile(QLatin1String("qml/Main_fremantle.qml"));
     viewer.showFullScreen();
 #elif defined(Q_WS_HARMATTAN)
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);

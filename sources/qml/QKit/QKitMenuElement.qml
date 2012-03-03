@@ -30,15 +30,10 @@ QKitDialogButton {
     id: menuElement
     objectName: "QKitMenuElement"
 
-    controllerSource: local.menuItem
+    property Item __menuItem // menu, that contains the item
 
-    width: local.menuItem.elementWidth
-    height: local.menuItem.elementHeight
-
-    onClicked: local.menuItem.active = false // to close menu after click on item
-
-    Item { // local variables
-        id: local
-        property Item menuItem: menuElement.parent.parent.parent // menu item
-    }
+    controllerSource: __menuItem
+    width: __menuItem.elementWidth
+    height: __menuItem.elementHeight
+    onClicked: __menuItem.active = false // to close menu after click on item
 }

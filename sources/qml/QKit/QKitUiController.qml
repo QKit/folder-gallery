@@ -66,7 +66,7 @@ Item {
 
     property bool  thumbnailSmooth: false // use smooth for thumbnails or not
     property bool  thumbnailAsynchronous: true // load in separate thread or not
-    property int   thumbnailBorderWidth: 2
+    property int   thumbnailBorderWidth: 6
     property color thumbnailBackgroundColor: "#DFDFDF"
     property color thumbnailBackgroundColorSelected: thumbnailBackgroundColor
     property color thumbnailBorderColor: "#DF7F7F7F"

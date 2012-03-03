@@ -41,10 +41,12 @@ QKitNavGridView {
 
     function refreshModel() { // refreshes model according to files and dirs properties
         var newModel = []; // true for dir, false for file
-        if (dirs) { // if dirs defines
+        if (dirs) { // if dirs defined
             for (var iDir = 0; dirs[iDir]; iDir++)
                 newModel[newModel.length] = true;
             __nDirs = iDir;
+        } else {
+            __nDirs = 0;
         }
         if (files) { // if files defined
             for (var iFile = 0; files[iFile]; iFile++)
@@ -69,6 +71,7 @@ QKitNavGridView {
         Component {
             id: folderThumbnail
             FolderThumbnail { // thumbnail for folder element
+                sourceDir: folderView.dirs[index]
                 Keys.onPressed: {
                     if (event.key === keyController.buttonPressKey) {
                         folderClicked(folderView.dirs[index], index)
@@ -79,7 +82,6 @@ QKitNavGridView {
                     anchors.fill: parent
                     onClicked: folderClicked(folderView.dirs[index], index)
                 }
-                Component.onCompleted: sourceDir = folderView.dirs[index]
             }
         }
 

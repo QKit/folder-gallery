@@ -45,7 +45,14 @@ QKitDialog {
         height: Math.min(parent.height, childrenRect.height)
         spacing: 0.5 * menu.elementHeight
         keyNavigationWraps: true
-        model: VisualItemModel { id: menuModel }
+        model: VisualItemModel {
+            id: menuModel
+            onChildrenChanged: {
+                for (var iChild = 0; children[iChild]; iChild++) {
+                    children[iChild].__menuItem = menu
+                }
+            }
+        }
     }
 
     onOpened: menuView.currentIndex = -1 // reset selected item on open

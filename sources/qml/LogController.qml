@@ -1,6 +1,6 @@
 /*******************************************************************************
 *                                                                              *
-*  Main item adaptor for Harmattan implementation.                             *
+*  LogController item implementation.                                          *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
@@ -24,19 +24,13 @@
 *                                                                              *
 *******************************************************************************/
 
-import com.nokia.meego 1.0
 import "QKit"
 
-Window {
-    Main {
-        anchors.fill: parent
-        uiController: UiController {
-            mouseHoverEnabled: false
-            buttonSmooth: true
-            thumbnailSmooth: false
-        }
-        keyController: QKitKeyController {
-            buttonPressKey: Qt.Key_Return
-        }
-    }
+QKitLogController {
+    parentLogging: true
+//        createdLogging: true
+//        activeLogging: true
+//        selectedLogging: true
+//        activeFocusLogging: true
+//        focusLogging: true
 }

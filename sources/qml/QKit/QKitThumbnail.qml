@@ -45,69 +45,34 @@ QKitItem {
 
         visible: thumbnailImage.status == Image.Ready // to view only when image viewed
         anchors.centerIn: parent
-        width: thumbnailImage.width + borderWidth
-        height: thumbnailImage.height + borderWidth
+        width: thumbnailImage.paintedWidth
+        height: thumbnailImage.paintedHeight
         border.width: thumbnail.borderWidth
         border.color: thumbnail.borderColor
         color: thumbnail.backgroundColor
+
+        states: [
+            State { // on selected or focused
+                name: "selected"
+                when: thumbnail.active && thumbnail.selected
+                PropertyChanges {
+                    target: thumbnailBackground
+                    color: thumbnail.backgroundColorSelected
+                    border.color: thumbnail.borderColorSelected
+                }
+            }
+        ]
+    }
+
+    QKitImage {
+        id: thumbnailImage
+        objectName: thumbnail.objectName + ":Image"
+
+        anchors.fill: parent
+        anchors.margins: thumbnail.borderWidth
+        fillMode: Image.PreserveAspectFit
+        source: thumbnail.source
         smooth: thumbnail.smooth
-
-        Item { // local variables
-            id: local
-
-            states: [
-                State { // on selected or focused
-                    name: "selected"
-                    when: thumbnail.active && thumbnail.selected
-                    PropertyChanges {
-                        target: thumbnailBackground
-                        color: thumbnail.backgroundColorSelected
-                        border.color: thumbnail.borderColorSelected
-                    }
-                }
-            ]
-        }
-
-        QKitImage {
-            id: thumbnailImage
-            objectName: thumbnail.objectName + ":Image"
-
-            property int maxWidth: thumbnail.width - 2 * thumbnail.borderWidth
-            property int maxHeight: thumbnail.height - 2 * thumbnail.borderWidth
-            property int originalSourceWidth // original source width
-            property int originalSourceHeight // original source height
-            property bool originalSizeStored: false // was oroginal source size stored or not
-
-            function resize() {
-                if (!thumbnailImage.originalSizeStored) return // if size wasn't stored can't resize - it will be done on size store
-                var widthBased = thumbnailImage.maxWidth / thumbnailImage.originalSourceWidth < thumbnailImage.maxHeight / thumbnailImage.originalSourceHeight
-                thumbnailImage.width = widthBased ? thumbnailImage.maxWidth : thumbnailImage.maxHeight * thumbnailImage.originalSourceWidth / thumbnailImage.originalSourceHeight
-                thumbnailImage.height = widthBased ? thumbnailImage.maxWidth * thumbnailImage.originalSourceHeight / thumbnailImage.originalSourceWidth : thumbnailImage.maxHeight
-                thumbnailImage.sourceSize.width = thumbnailImage.width
-                thumbnailImage.sourceSize.height = thumbnailImage.height
-            }
-
-            anchors.centerIn: parent
-            source: thumbnail.source
-            smooth: thumbnail.smooth
-            asynchronous: thumbnail.asynchronous
-
-            onMaxWidthChanged: thumbnailImage.resize()
-            onMaxHeightChanged: thumbnailImage.resize()
-            onSourceChanged: {
-                originalSizeStored = false
-                if (visible) {
-                    visible = false
-                    visible = true
-                }
-            }
-            onStatusChanged: {
-                if (thumbnailImage.status != Image.Ready) return
-                thumbnailImage.originalSourceWidth = thumbnailImage.sourceSize.width
-                thumbnailImage.originalSourceHeight = thumbnailImage.sourceSize.height
-                thumbnailImage.originalSizeStored = true
-                thumbnailImage.resize()
-            }
-        }
+        asynchronous: thumbnail.asynchronous
     }
 }
