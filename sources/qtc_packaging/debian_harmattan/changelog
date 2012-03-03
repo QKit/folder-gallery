@@ -1,0 +1,7 @@
+foldergallery (1.4.1) stable; urgency=low
+
+  * Using QKit library.
+  * Therefore, graphical changes.
+  * Toolbar close by click on fullscreen view.
+
+ -- Kirill Chuvulin <kirill.chuvilin@gmail.com> Wed, 26 Oct 2011 01:07:00 +0400
