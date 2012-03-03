@@ -1,6 +1,6 @@
 /*******************************************************************************
 *                                                                              *
-*  Folder Gallery main source file.                                            *
+*  Preview image of media files provider for declarative items.                *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
@@ -24,44 +24,25 @@
 *                                                                              *
 *******************************************************************************/
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+#include "MediaPreviewImageProvider.h"
 
-#include <QtDeclarative>
-#include "mediafiles/MediaFile.h"
-#include "mediafiles/MediaDir.h"
-#include "mediafiles/MediaRoots.h"
-#include "mediafiles/MediaPreviewImageProvider.h"
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    QmlApplicationViewer viewer;
+MediaPreviewImageProvider::MediaPreviewImageProvider() :
+    QDeclarativeImageProvider(QDeclarativeImageProvider::Image) {
+}
 
-    app.setApplicationName(app.trUtf8("Folder Gallery"));
 
-    qmlRegisterType<MediaFile>("MediaFile", 1, 0, "MediaFile");
-    qmlRegisterType<MediaDir>("MediaDir", 1, 0, "MediaDir");
-    qmlRegisterType<MediaRoots>("MediaRoots", 1, 0, "MediaRoots");
-
-    viewer.engine()->addImageProvider(QLatin1String("preview"), new MediaPreviewImageProvider);
-
-#if defined(Q_WS_MAEMO_5)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_fremantle.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_WS_HARMATTAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_harmattan.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_OS_SYMBIAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_symbian.qml"));
-    viewer.showFullScreen();
-#else
-//    (defined(Q_WS_WIN) || defined(Q_WS_X11))
-    viewer.setMainQmlFile(QLatin1String("qml/Main_desktop.qml"));
-    viewer.show();
-#endif
-//    viewer.showExpanded();
-    return app.exec();
+QImage MediaPreviewImageProvider::requestImage(const QString & id, QSize * size, const QSize & requestedSize) {
+    try {
+        QUrl source(id);
+        QImage result = MediaFile(source).getPreviewImage(requestedSize.width(), requestedSize.height());
+        if (size) *size = result.size();
+        return result;
+    } catch (MediaFile::Exception exception) {
+        if (exception == MediaFile::EXCEPTION_ACCESS) { // problem with access to file
+            if (size) *size = QSize(0,0);
+            return QImage(1,1, QImage::Format_ARGB32);
+        }
+        throw exception; // rethrow exception
+    }
 }

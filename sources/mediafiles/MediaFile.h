@@ -97,11 +97,11 @@ public:
     QUrl getThumbnail();
 
     /*!
-     * \brief Returns thumbnail image for file.
-     * \param width  max width of thumbnail
-     * \param height max height of thumbnail
+     * \brief Returns preview image for file.
+     * \param width  max width
+     * \param height max height
      */
-    QImage getThumbnailImage(int width, int height);
+    QImage getPreviewImage(int width, int height);
 
     /*!
      * \brief Returns time of last modify.

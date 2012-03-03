@@ -1,6 +1,6 @@
 /*******************************************************************************
 *                                                                              *
-*  Folder Gallery main source file.                                            *
+*  Preview image of media files provider for declarative items.                *
 *                                                                              *
 *  Copyright (C) 2011 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
@@ -24,44 +24,32 @@
 *                                                                              *
 *******************************************************************************/
 
-#include <QtGui/QApplication>
-#include "qmlapplicationviewer.h"
+#ifndef _MediaPreviewImageProvider_h_
+#define _MediaPreviewImageProvider_h_
 
-#include <QtDeclarative>
-#include "mediafiles/MediaFile.h"
-#include "mediafiles/MediaDir.h"
-#include "mediafiles/MediaRoots.h"
-#include "mediafiles/MediaPreviewImageProvider.h"
+#include <QDeclarativeImageProvider>
+#include "MediaFile.h"
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    QmlApplicationViewer viewer;
+/*!
+ * \brief Preview image of media files provider for declarative items.
+ * \author KiRiK aka Kirill Chuvilin (kirik-ch.ru)
+ */
+class MediaPreviewImageProvider : public QDeclarativeImageProvider {
 
-    app.setApplicationName(app.trUtf8("Folder Gallery"));
+public:
+    /*!
+     * \brief Constructor.
+     */
+    MediaPreviewImageProvider();
 
-    qmlRegisterType<MediaFile>("MediaFile", 1, 0, "MediaFile");
-    qmlRegisterType<MediaDir>("MediaDir", 1, 0, "MediaDir");
-    qmlRegisterType<MediaRoots>("MediaRoots", 1, 0, "MediaRoots");
+    /*!
+     * \brief Generates image by id.
+     * \return preview image for media file
+     * \param id string with url to file
+     * \param size pointer to size of generated image
+     * \param requestedSize sourceSize requested by an Image element
+     */
+    QImage requestImage(const QString & id, QSize * size, const QSize & requestedSize);
+};
 
-    viewer.engine()->addImageProvider(QLatin1String("preview"), new MediaPreviewImageProvider);
-
-#if defined(Q_WS_MAEMO_5)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_fremantle.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_WS_HARMATTAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_harmattan.qml"));
-    viewer.showFullScreen();
-#elif defined(Q_OS_SYMBIAN)
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/Main_symbian.qml"));
-    viewer.showFullScreen();
-#else
-//    (defined(Q_WS_WIN) || defined(Q_WS_X11))
-    viewer.setMainQmlFile(QLatin1String("qml/Main_desktop.qml"));
-    viewer.show();
-#endif
-//    viewer.showExpanded();
-    return app.exec();
-}
+#endif // _MediaPreviewImageProvider_h_

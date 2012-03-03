@@ -28,5 +28,7 @@ import "QKit"
 
 QKitUiController {
     pageTexture: "images/alder_pre.jpg"
+    thumbnailAsynchronous: false
     thumbnailBorderColor: "#90000000"
+    thumbnailBackgroundColor: "#50000000"
 }

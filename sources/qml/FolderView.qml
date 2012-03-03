@@ -88,7 +88,8 @@ QKitNavGridView {
         Component {
             id: fileThumbnail
             QKitThumbnail { // thumbnail for folder element
-                source: (!folderView.model[index] &&  folderView.files[index - __nDirs] ? folderView.files[index - __nDirs].thumbnail : "")
+                visible: !folderView.model[index] &&  Qt.isQtObject(folderView.files[index - __nDirs]) && (folderView.files[index - __nDirs].thumbnail !== "")
+                source: visible ? folderView.files[index - __nDirs].thumbnail : ""
                 transform: Rotation {
                     angle: -20 + 40 * Math.random()
                     origin.x: width * (0.25 + 0.5 * Math.random())

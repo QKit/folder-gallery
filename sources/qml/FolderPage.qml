@@ -55,5 +55,9 @@ QKitPage {
     }
 
     onFocusChanged: folderView.focus = focus
-    onDirChanged: folderView.currentIndex = -1
+    onDirChanged: {
+        folderView.currentIndex = -1
+        folderView.contentX = 0
+        folderView.contentY = 0
+    }
 }

@@ -30,8 +30,8 @@
 #include <QVariant>
 
 MediaThumbnailGenerator::MediaThumbnailGenerator() {
-    this->maxWidth = 256;
-    this->maxHeight = 256;
+    this->maxWidth = 128;
+    this->maxHeight = 128;
 }
 
 
@@ -58,7 +58,7 @@ void MediaThumbnailGenerator::generateThumbnail(const QUrl& fileSource, const QS
             this->start();
     } else {
         MediaFile mediaFile(fileSource); // media file for the source
-        mediaFile.getThumbnailImage(this->maxWidth, this->maxHeight).save(thumbnailPath); // saves thumbnail
+        mediaFile.getPreviewImage(this->maxWidth, this->maxHeight).save(thumbnailPath); // saves thumbnail
         QFileInfo fileTester(thumbnailPath);
         while (!fileTester.isWritable()) {} // whait for creation
     }

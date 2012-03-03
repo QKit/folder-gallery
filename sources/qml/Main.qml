@@ -109,7 +109,7 @@ QKitApplication {
         }
 
         QKitMenuElement { // goto website button
-//            visible: new Date > new Date(2012,01,3)
+//            visible: new Date > new Date(2012,01,10)
             text: qsTr("Homepage")
             onClicked: Qt.openUrlExternally(qsTr("https://projects.developer.nokia.com/foldergallery"))
         }

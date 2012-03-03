@@ -44,12 +44,14 @@ QKitItem {
             width: parent.width
             height: parent.width
             QKitThumbnail {
-                visible: Qt.isQtObject(sourceDir) && sourceDir.files.length > 2
+                property url fileThumbnail: Qt.isQtObject(sourceDir) && sourceDir.files.length > 2 ? sourceDir.files[2].thumbnail : ""
+
+                visible: fileThumbnail != ""
                 selected: folderThumbnail.selected
                 anchors.centerIn: parent
                 width: 0.9 * parent.width
                 height: 0.9 * parent.height
-                source: Qt.isQtObject(sourceDir) && sourceDir.files.length > 2 ? sourceDir.files[2].thumbnail : ""
+                source: fileThumbnail
                 transform: Rotation {
                     angle: -20 + 40 * Math.random()
                     origin.x: width * (0.25 + 0.5 * Math.random())
@@ -57,12 +59,14 @@ QKitItem {
                 }
             }
             QKitThumbnail {
-                visible: Qt.isQtObject(sourceDir) && sourceDir.files.length > 1
+                property url fileThumbnail: Qt.isQtObject(sourceDir) && sourceDir.files.length > 1 ? sourceDir.files[1].thumbnail : ""
+
+                visible: fileThumbnail != ""
                 selected: folderThumbnail.selected
                 anchors.centerIn: parent
                 width: 0.9 * parent.width
                 height: 0.9 * parent.height
-                source: Qt.isQtObject(sourceDir) && sourceDir.files.length > 1 ? sourceDir.files[1].thumbnail : ""
+                source: fileThumbnail
                 transform: Rotation {
                     angle: -20 + 40 * Math.random()
                     origin.x: width * (0.25 + 0.5 * Math.random())
@@ -71,12 +75,13 @@ QKitItem {
             }
             QKitThumbnail {
                 property bool isDirEmpty: !(Qt.isQtObject(sourceDir) && sourceDir.files.length > 0)
+                property url fileThumbnail: isDirEmpty ? "" : sourceDir.files[0].thumbnail
 
                 selected: folderThumbnail.selected
                 anchors.centerIn: parent
                 width: 0.9 * parent.width
                 height: 0.9 * parent.height
-                source: isDirEmpty ? "images/icon-m-common-directory.png" : sourceDir.files[0].thumbnail
+                source: isDirEmpty ? "images/icon-m-common-directory.png" : fileThumbnail
                 backgroundColor: isDirEmpty ? "#00000000" : uiController.thumbnailBackgroundColor
                 backgroundColorSelected: isDirEmpty ? backgroundColor : uiController.thumbnailBorderColor
                 borderColor: isDirEmpty ? "#00000000" : uiController.thumbnailBorderColor

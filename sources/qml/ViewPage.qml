@@ -60,37 +60,27 @@ QKitPage {
 
             width:  viewPage.width
             height:  viewPage.height
-            Image {
-                // to view while image loading
-                visible: !imagePreview.visible && !imageZoomed.visible
+
+            Image { // to view on none zoom
+                id: imageThumbnail
+
+                visible: imagePreview.status != Image.Ready
                 anchors.centerIn: parent
-                scale: Math.min(fileViewer.width / sourceSize.width, fileViewer.height / sourceSize.height)
+                scale: Math.min(parent.width/width, parent.height/height)
                 source: fileViewer.thumbnail
                 asynchronous: false
+                smooth: true
             }
             Image { // to view on none zoom
                 id: imagePreview
 
-                property bool resized: false // ready resize or not
-                property bool isOutOfBounds: sourceSize.width > parent.width || sourceSize.height > parent.height // is image bigget than page
-
-                visible: (status == Image.Ready) && resized && (flick.zoom === 1)
                 anchors.centerIn: parent
-                width: (isOutOfBounds ? parent.width : sourceSize.width)
-                height: (isOutOfBounds ? parent.height : sourceSize.height)
-                fillMode: (isOutOfBounds ? Image.PreserveAspectFit : Image.PreserveAspectCrop)
-                source: fileViewer.source
+                scale: Math.min(1, parent.width/width, parent.height/height)
+                sourceSize.width: Math.max(parent.width, parent.height)
+                sourceSize.height: Math.max(parent.width, parent.height)
+                source: "image://preview/" + fileViewer.source
                 asynchronous: true
-                onSourceChanged: resized = false
-                onStatusChanged: {
-                    if (status == Image.Ready) {
-                        var resizeScale = Math.min(1, Math.max(fileViewer.width, fileViewer.height) / Math.min(sourceSize.width, sourceSize.height)) // best scale for current width and height and rotations
-                        sourceSize.width *= resizeScale
-                        sourceSize.height *= resizeScale
-                        resized = true
-                    }
-                }
-
+                smooth: false
             }
         }
 
@@ -126,29 +116,26 @@ QKitPage {
 
         function zoomContent() {
             if (zoom != 1) {
-                var newWidth = imageZoomed.sourceSize.width * imageZoomed.minScale * flick.zoom
-                var newHeight = imageZoomed.sourceSize.height * imageZoomed.minScale * flick.zoom
-                var centerX = flick.contentWidth / 2
-                var centerY = flick.contentHeight / 2
-                contentWidth = newWidth
-                contentHeight = newHeight
+                imageZoomed.scale = imageZoomed.minScale * flick.zoom
             }
         }
 
         visible: (imageZoomed.status == Image.Ready) &&  (flick.zoom !== 1)
         z: 2
         anchors.fill: parent
+        contentWidth: imageZoomed.width * imageZoomed.scale
+        contentHeight: imageZoomed.height * imageZoomed.scale
         onZoomChanged: {
             if (zoom < 1)
-                zoom = 1
-            else if (zoom > 5)
-                zoom = 5
+                zoom = 1 // minimum zoom
+            else if (zoom > 2)
+                zoom = 2 // maximum zoom
         }
         onVisibleChanged: {
             viewPage.toolbar.visible = !visible
             if (visible) { // start of zooming
-                flick.contentWidth = imageZoomed.sourceSize.width * imageZoomed.minScale * flick.zoom
-                flick.contentHeight = imageZoomed.sourceSize.height * imageZoomed.minScale * flick.zoom
+                imageZoomed.minScale = Math.min(1, viewPage.width / imageZoomed.width, viewPage.height / imageZoomed.height)
+                imageZoomed.scale = imageZoomed.minScale * flick.zoom
                 flick.contentX = - (flick.width - flick.contentWidth) / 2
                 flick.contentY = - (flick.height - flick.contentHeight) / 2
             }
@@ -163,22 +150,16 @@ QKitPage {
         Image { // to view full image on zoom
             id: imageZoomed
 
-            property real minScale: Math.min(1, viewPage.width / sourceSize.width, viewPage.height / sourceSize.height)
+            property real minScale: 1
 
-            width: flick.contentWidth
-            height: flick.contentHeight
-            source: (viewPage.files && (viewPage.iCurrentFile >= 0) ? viewPage.files[viewPage.iCurrentFile].source : "")
-            smooth: false
+            anchors.centerIn: parent
+            sourceSize.width: flick.width * 2
+            sourceSize.height: flick.height * 2
+            source: (viewPage.files && (viewPage.iCurrentFile >= 0) ? "image://preview/" + viewPage.files[viewPage.iCurrentFile].source : "")
+            smooth: true
             asynchronous: true
         }
     }
-
-//    Text {
-//        anchors.left: parent.left
-//        anchors.top: parent.top
-//        text: "flick.contentX: " + flick.contentX + ", flick.contentY: " + flick.contentY
-//    }
-
 
     QKitDialogButton { // zoom in button
         width: 0.8 * viewPage.toolbar.height

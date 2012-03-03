@@ -13,7 +13,7 @@ QML_IMPORT_PATH =
 # 0x2002CCCF value if protected UID is given to the application
 #symbian:DEPLOYMENT.installer_header = 0x2002CCCF
 
-VERSION = 1.7.4
+VERSION = 1.8.3
 
 symbian {
     TARGET.UID3 = 0x2004a654
@@ -56,14 +56,16 @@ HEADERS += \
     mediafiles/MediaThumbnailDb.h \
     mediafiles/MediaRoots.h \
     mediafiles/MediaFile.h \
-    mediafiles/MediaDir.h
+    mediafiles/MediaDir.h \
+    mediafiles/MediaPreviewImageProvider.h
 
 SOURCES += main.cpp \
     mediafiles/MediaThumbnailGenerator.cpp \
     mediafiles/MediaThumbnailDb.cpp \
     mediafiles/MediaRoots.cpp \
     mediafiles/MediaFile.cpp \
-    mediafiles/MediaDir.cpp
+    mediafiles/MediaDir.cpp \
+    mediafiles/MediaPreviewImageProvider.cpp
 
 OTHER_FILES += \
     foldergallery.svg \

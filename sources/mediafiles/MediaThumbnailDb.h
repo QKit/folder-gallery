@@ -94,7 +94,7 @@ private:
      * \return string with name of thumbnail file
      * \param id file id
      */
-    QString getThumbnailNameById(int id) const {return QString("thumbnail" + QString::number(id) + ".jpg");}
+    QString getThumbnailNameById(int id) const {return QString("thumbnail" + QString::number(id) + ".png");}
 
     /*!
      * \brief Returns path to thumbnail by id.

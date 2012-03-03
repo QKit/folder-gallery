@@ -25,6 +25,8 @@
 *******************************************************************************/
 
 #include "MediaFile.h"
+#include <QImageReader>
+#include <QColor>
 
 QMultiMap<QUrl, MediaFile*> MediaFile::mediaFiles;
 
@@ -53,9 +55,15 @@ QUrl MediaFile::getThumbnail() {
 }
 
 
-QImage MediaFile::getThumbnailImage(int width, int height) {
+QImage MediaFile::getPreviewImage(int width, int height) {
     if (!this->fileInfo.exists()) throw MediaFile::EXCEPTION_ACCESS;
-    return QImage(this->fileInfo.absoluteFilePath()).scaled(width, height, Qt::KeepAspectRatio);
+    QImageReader imageReader(this->fileInfo.absoluteFilePath());
+    imageReader.setQuality(0);
+    QSize previewSize = imageReader.size();
+    if ((width > 0 && height > 0) && (previewSize.width() > width || previewSize.height() > height)) previewSize.scale(width, height, Qt::KeepAspectRatio);
+    imageReader.setScaledSize(previewSize);
+    imageReader.setBackgroundColor(QColor(0,0,0,0));
+    return imageReader.read();
 }
 
 

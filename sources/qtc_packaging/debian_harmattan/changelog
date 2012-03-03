@@ -1,3 +1,12 @@
+foldergallery (1.8.3) stable; urgency=low
+
+  * Much faster (now it can even be used on Symbian devices :) ).
+  * Thumbnails in a png format (please, remove the folder ".thumbnails" in your home directory).
+  * Bugfixes.
+
+ -- Kirill Chuvilin <kirill.chuvilin@gmail.com> Wed, 08 Feb 2012 00:03:29 +0400
+
+
 foldergallery (1.7.4) stable; urgency=low
 
   * Color fix.
