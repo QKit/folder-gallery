@@ -2,7 +2,7 @@
 *                                                                              *
 *  Folder Gallery main source file.                                            *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
     QmlApplicationViewer viewer;
 
     app.setApplicationName(app.trUtf8("Folder Gallery"));
+    viewer.setWindowTitle(app.trUtf8("Folder Gallery"));
 
     qmlRegisterType<MediaFile>("MediaFile", 1, 0, "MediaFile");
     qmlRegisterType<MediaDir>("MediaDir", 1, 0, "MediaDir");

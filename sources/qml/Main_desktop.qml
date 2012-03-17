@@ -2,7 +2,7 @@
 *                                                                              *
 *  Main item adaptor for PC implementation.                                    *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -28,8 +28,11 @@ import Qt 4.7
 import "QKit"
 
 Main {
+    id: application
     width: 854
     height: 480
+    os: "Harmattan"
+//    os: "Desktop"
     uiController: UiController {
         mouseHoverEnabled: true
         buttonSmooth: true

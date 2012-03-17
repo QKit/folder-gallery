@@ -2,7 +2,7 @@
 *                                                                              *
 *  Toolbar item implementation.                                                *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -30,6 +30,7 @@ QKitRectangle {
     id: toolbar
     objectName: "QKitToolbar"
 
+    default property alias content: toolbarContent.children // toolbar content
     // UI properties
     property int   animationDuration: uiController.toolbarAnimationDuration
     property int   borderWidth: uiController.toolbarBorderWidth
@@ -37,56 +38,134 @@ QKitRectangle {
     // key properties
     property int leftButtonPressKey: keyController.toolbarLeftButtonPressKey
     property int rightButtonPressKey: keyController.toolbarRightButtonPressKey
-    // other properties
-    property Item  leftButton
-    property Item  rightButton
 
     function keyPressedEvent(event) { // key event handler
         switch (event.key) {
         case leftButtonPressKey:
-            if (leftButton)
-                leftButton.pressByKey(event)
-            break
+            if (__local.leftButton)
+                __local.leftButton.pressByKey(event);
+            break;
         case rightButtonPressKey:
-            if (rightButton)
-                rightButton.pressByKey(event)
-            break
+            if (__local.rightButton)
+                __local.rightButton.pressByKey(event);
+            break;
         default:
-            return
+            return;
         }
-        event.accepted = true
+        event.accepted = true;
     }
 
-    signal opened() // emits on dialog open
-    signal closed() // emits on dialog close
-
     active: true // initially opened
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom // on bottom of the parent
-    anchors.left: parent.left
-    height: Math.max(0.1 * parent.height, 0.06 * parent.width)
+    anchors.fill: parent
     z: 1 // to view ower other
     color: uiController.toolbarBackgroundColor
 
-    Item { // local variables
-        id: local
+    Keys.onPressed: keyPressedEvent(event);
 
-        state: (toolbar.active ? "opened" : "closed")
+    property Item __local: Item { // local variables
+        property variant leftButton: 0
+        property variant rightButton: 0
         states: [
             State {
-                name: "opened"
+                name: "opened desktop"
+                when: toolbar.active && uiController.isDesktopOs
                 PropertyChanges {
                     target: toolbar
                     visible: true
                     focus: true
+                    anchors.bottomMargin: toolbar.parent.height - 24
+                }
+                PropertyChanges {
+                    target: toolbarContent
+                    flow: Grid.LeftToRight
+                    columns: toolbarContent.nChildren
+                }
+                PropertyChanges {
+                    target: toolbarBorder
+                    anchors.topMargin: toolbar.height - toolbar.borderWidth
                 }
             },
             State {
-                name: "closed"
+                name: "closed desktop"
+                when: !toolbar.active && uiController.isDesktopOs
                 PropertyChanges {
                     target: toolbar
                     visible: false
-                    height: 0
+                    anchors.bottomMargin: toolbar.parent.height
+                }
+                PropertyChanges {
+                    target: toolbar.parent
+                    focus: true
+                }
+            },
+            State {
+                name: "opened landskape"
+                when: toolbar.active && !uiController.isDesktopOs && uiController.isLandscapeOrientation
+                PropertyChanges {
+                    target: toolbar
+                    visible: true
+                    focus: true
+                    anchors.leftMargin: toolbar.parent.width - toolbar.parent.height / 6
+                }
+                PropertyChanges {
+                    target: __local
+                    leftButton: toolbarContent.nChildren > 0 ? toolbarContent.children[toolbarContent.nChildren - 1] : 0
+                    rightButton: toolbarContent.nChildren > 0 ? toolbarContent.children[0] : 0
+                }
+                PropertyChanges {
+                    target: toolbarContent
+                    flow: Grid.TopToBottom
+                    rows: toolbarContent.nChildren
+                }
+                PropertyChanges {
+                    target: toolbarBorder
+                    anchors.rightMargin: toolbar.width - toolbar.borderWidth
+                }
+            },
+            State {
+                name: "closed landskape"
+                when: !toolbar.active && !uiController.isDesktopOs && uiController.isLandscapeOrientation
+                PropertyChanges {
+                    target: toolbar
+                    visible: false
+                    anchors.leftMargin: toolbar.parent.width
+                }
+                PropertyChanges {
+                    target: toolbar.parent
+                    focus: true
+                }
+            },
+            State {
+                name: "opened portrait"
+                when: toolbar.active && !uiController.isDesktopOs && uiController.isPortraitOrientation
+                PropertyChanges {
+                    target: toolbar
+                    visible: true
+                    focus: true
+                    anchors.topMargin: toolbar.parent.height - toolbar.parent.width / 8
+                }
+                PropertyChanges {
+                    target: __local
+                    leftButton: toolbarContent.nChildren > 0 ? toolbarContent.children[0] : 0
+                    rightButton: toolbarContent.nChildren > 0 ? toolbarContent.children[toolbarContent.nChildren - 1] : 0
+                }
+                PropertyChanges {
+                    target: toolbarContent
+                    flow: Grid.LeftToRight
+                    columns: toolbarContent.nChildren
+                }
+                PropertyChanges {
+                    target: toolbarBorder
+                    anchors.bottomMargin: toolbar.height - toolbar.borderWidth
+                }
+            },
+            State {
+                name: "closed portrait"
+                when: !toolbar.active && !uiController.isDesktopOs && uiController.isPortraitOrientation
+                PropertyChanges {
+                    target: toolbar
+                    visible: false
+                    anchors.topMargin: toolbar.parent.height
                 }
                 PropertyChanges {
                     target: toolbar.parent
@@ -97,7 +176,8 @@ QKitRectangle {
 
         transitions: [
             Transition {
-                to: "opened"
+                from: "closed desktop"
+                to: "opened desktop"
                 SequentialAnimation {
                     PropertyAnimation {
                         target:  toolbar
@@ -106,17 +186,82 @@ QKitRectangle {
                     }
                     PropertyAnimation {
                         target:  toolbar
-                        property: "height"
+                        property: "anchors.bottomMargin"
                         duration: toolbar.animationDuration
                     }
                 }
             },
             Transition {
-                to: "closed"
+                from: "opened desktop"
+                to: "closed desktop"
                 SequentialAnimation {
                     PropertyAnimation {
                         target:  toolbar
-                        property: "height"
+                        property: "anchors.bottomMargin"
+                        duration: toolbar.animationDuration
+                    }
+                    PropertyAnimation {
+                        target:  toolbar
+                        property: "visible"
+                        duration: 0
+                    }
+                }
+            },
+            Transition {
+                from: "closed landskape"
+                to: "opened landskape"
+                SequentialAnimation {
+                    PropertyAnimation {
+                        target:  toolbar
+                        property: "visible"
+                        duration: 0
+                    }
+                    PropertyAnimation {
+                        target:  toolbar
+                        property: "anchors.leftMargin"
+                        duration: toolbar.animationDuration
+                    }
+                }
+            },
+            Transition {
+                from: "opened landskape"
+                to: "closed landskape"
+                SequentialAnimation {
+                    PropertyAnimation {
+                        target:  toolbar
+                        property: "anchors.leftMargin"
+                        duration: toolbar.animationDuration
+                    }
+                    PropertyAnimation {
+                        target:  toolbar
+                        property: "visible"
+                        duration: 0
+                    }
+                }
+            },
+            Transition {
+                from: "closed portrait"
+                to: "opened portrait"
+                SequentialAnimation {
+                    PropertyAnimation {
+                        target:  toolbar
+                        property: "visible"
+                        duration: 0
+                    }
+                    PropertyAnimation {
+                        target:  toolbar
+                        property: "anchors.topMargin"
+                        duration: toolbar.animationDuration
+                    }
+                }
+            },
+            Transition {
+                from: "opened portrait"
+                to: "closed portrait"
+                SequentialAnimation {
+                    PropertyAnimation {
+                        target:  toolbar
+                        property: "anchors.topMargin"
                         duration: toolbar.animationDuration
                     }
                     PropertyAnimation {
@@ -127,35 +272,25 @@ QKitRectangle {
                 }
             }
         ]
+    }
 
-        onStateChanged: {
-            switch (state) {
-            case "closed":
-                toolbar.closed()
-                break
-            case "opened":
-                toolbar.opened()
-                break
-            }
+    QKitGrid {
+        id: toolbarContent
+        objectName: toolbar.objectName + ":Content"
+
+        property int nChildren: 0 // childrent number
+
+        anchors.fill: parent
+        anchors.margins: 0.1 * Math.min(toolbar.width, toolbar.height);
+        spacing: anchors.margins
+        onChildrenChanged: {
+            for (nChildren = 0; children[nChildren]; nChildren++); // count all children
         }
     }
 
     Rectangle {
-        anchors.top: toolbar.top
-        anchors.right: toolbar.right
-        anchors.left: toolbar.left
-        height: toolbar.borderWidth
+        id: toolbarBorder
+        anchors.fill: parent
         color: toolbar.borderColor
     }
-
-    onLeftButtonChanged: {
-        leftButton.parent = toolbar
-        leftButton.makeLeft()
-    }
-    onRightButtonChanged: {
-        rightButton.parent = toolbar
-        rightButton.makeRight()
-    }
-
-    Keys.onPressed: keyPressedEvent(event)
 }

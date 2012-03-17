@@ -1,5 +1,5 @@
 Source: foldergallery
-Section: user/hidden
+Section: user/other
 Priority: optional
 Maintainer: Kirill Chuvilin <kirill.chuvilin@gmail.com>
 Build-Depends: debhelper (>= 5), libqt4-dev

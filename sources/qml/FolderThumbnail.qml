@@ -2,7 +2,7 @@
 *                                                                              *
 *  Folder thunmbnail item implimentation.                                      *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -39,52 +39,56 @@ QKitItem {
         visible: Qt.isQtObject(sourceDir)
         anchors.fill: parent
         QKitItem {
-            id: imagesView
-
             width: parent.width
             height: parent.width
+
             QKitThumbnail {
+                id: file2Thumbnail
+
                 property url fileThumbnail: Qt.isQtObject(sourceDir) && sourceDir.files.length > 2 ? sourceDir.files[2].thumbnail : ""
 
                 visible: fileThumbnail != ""
                 selected: folderThumbnail.selected
                 anchors.centerIn: parent
-                width: 0.9 * parent.width
-                height: 0.9 * parent.height
+                width: 0.8 * parent.width
+                height: 0.8 * parent.height
                 source: fileThumbnail
-                transform: Rotation {
-                    angle: -20 + 40 * Math.random()
-                    origin.x: width * (0.25 + 0.5 * Math.random())
-                    origin.y: height * (0.25 + 0.5 * Math.random())
+                transform: Translate {
+                    x: -parent.width / 10
+                    y: -parent.height / 10
                 }
             }
             QKitThumbnail {
+                id: file1Thumbnail
+
                 property url fileThumbnail: Qt.isQtObject(sourceDir) && sourceDir.files.length > 1 ? sourceDir.files[1].thumbnail : ""
 
                 visible: fileThumbnail != ""
                 selected: folderThumbnail.selected
                 anchors.centerIn: parent
-                width: 0.9 * parent.width
-                height: 0.9 * parent.height
+                width: 0.8 * parent.width
+                height: 0.8 * parent.height
                 source: fileThumbnail
-                transform: Rotation {
-                    angle: -20 + 40 * Math.random()
-                    origin.x: width * (0.25 + 0.5 * Math.random())
-                    origin.y: height * (0.25 + 0.5 * Math.random())
+                transform: Translate {
+                    x: parent.width / 10
                 }
             }
             QKitThumbnail {
-                property bool isDirEmpty: !(Qt.isQtObject(sourceDir) && sourceDir.files.length > 0)
-                property url fileThumbnail: isDirEmpty ? "" : sourceDir.files[0].thumbnail
+                id: file0Thumbnail
+
+                property bool isDirEmpty: !(Qt.isQtObject(sourceDir) && sourceDir.filesCount > 0)
 
                 selected: folderThumbnail.selected
                 anchors.centerIn: parent
-                width: 0.9 * parent.width
-                height: 0.9 * parent.height
-                source: isDirEmpty ? "images/icon-m-common-directory.png" : fileThumbnail
+                width: 0.8 * parent.width
+                height: 0.8 * parent.height
+                source: isDirEmpty ? "images/icon-m-common-directory.png" : sourceDir.files[0].thumbnail
                 backgroundColor: isDirEmpty ? "#00000000" : uiController.thumbnailBackgroundColor
                 backgroundColorSelected: isDirEmpty ? backgroundColor : uiController.thumbnailBorderColor
                 borderColor: isDirEmpty ? "#00000000" : uiController.thumbnailBorderColor
+                transform: Translate {
+                    y: (file0Thumbnail.isDirEmpty || file1Thumbnail.fileThumbnail == "") ? 0 : parent.height / 10
+                }
             }
         }
 

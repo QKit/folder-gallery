@@ -2,7 +2,7 @@
 *                                                                              *
 *  Page with root media forlders implementation.                               *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -36,15 +36,14 @@ QKitPage {
     property alias currentIndex: folderView.currentIndex
 
     toolbar: QKitToolbar {
-        rightButton: QKitToolbarMenuButton { onClicked: homePage.menuToggled() }
+        color: "#00000000"
+        borderColor: "#00000000"
+        QKitToolbarMenuButton { onClicked: homePage.menuToggled() }
     }
 
     FolderView {
         id: folderView
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.toolbar.top
+        anchors.fill: parent
         onFolderClicked: homePage.openFolderToggled(dir, index) // to go to folder page
     }
 

@@ -2,7 +2,7 @@
 *                                                                              *
 *  View of folder subfilders and files item implementation.                    *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -55,7 +55,7 @@ QKitNavGridView {
         model = newModel;
     }
 
-    cellWidth: Math.min(width / Math.round(width / 212 + 0.5) - 0.5, 0.49 * width)
+    cellWidth: Math.min(width / Math.round(width / 180 + 0.5) - 0.5, 0.49 * width)
     cellHeight: 1.2 * cellWidth
     keyNavigationWraps: false
     onFilesChanged: refreshModel()
@@ -89,12 +89,7 @@ QKitNavGridView {
             id: fileThumbnail
             QKitThumbnail { // thumbnail for folder element
                 visible: !folderView.model[index] &&  Qt.isQtObject(folderView.files[index - __nDirs]) && (folderView.files[index - __nDirs].thumbnail !== "")
-                source: visible ? folderView.files[index - __nDirs].thumbnail : ""
-                transform: Rotation {
-                    angle: -20 + 40 * Math.random()
-                    origin.x: width * (0.25 + 0.5 * Math.random())
-                    origin.y: height * (0.25 + 0.5 * Math.random())
-                }
+                source: visible && Qt.isQtObject(folderView.files[index - __nDirs]) ? folderView.files[index - __nDirs].thumbnail : ""
                 Keys.onPressed: {
                     if (event.key === keyController.buttonPressKey) {
                         fileClicked(folderView.files[index - __nDirs], index - __nDirs)

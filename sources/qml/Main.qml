@@ -2,7 +2,7 @@
 *                                                                              *
 *  Main application item implementation.                                       *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -32,12 +32,14 @@ import "./stack.js" as DirStack
 QKitApplication {
     id: application
 
-    property bool isOnQA: isPayed && (new Date <= new Date(2012,01,10))
-    property bool isPayed: false
+    property MediaRoots mediaRoots: MediaRoots {}
 
-    MediaRoots { id: mediaRoots }
+    property bool isForStore: false
+    property string version: "1.9.1"
 
-    logController: LogController { }
+    function externalUrl(link) {
+        return "http://scripts.kirik-ch.ru/appredirect.php?app=folder-gallery&link=" + link +"&platform=" + os + "&version=" + version + (isForStore ? "&isforstore=true" : "");
+    }
 
     HomePage { // page with all media roots
         id: homePage
@@ -84,19 +86,9 @@ QKitApplication {
         onMenuToggled: menu.active = true
     }
 
-    QKitMenu {
+    Menu {
         id: menu
         objectName: "Menu"
-
-        children: [Text {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            font.pixelSize: 0.04 * Math.min(menu.width, menu.height)
-            text: qsTr("by Kirill Chuvilin aka KiRiK for MaemoWorld.ru") + (application.isPayed ? "" : "\n" + qsTr("This is free full-featured version of application.") + "\n" + qsTr("Please pay it in Nokia Store if you liked it \n or want it to be developed."))
-            horizontalAlignment: Text.AlignHCenter
-            color: "white"
-        }]
         onClosed: {
             switch (application.state) {
             case "home":
@@ -109,21 +101,6 @@ QKitApplication {
                 viewPage.forceActiveFocus()
                 break
             }
-        }
-
-        QKitMenuElement { // goto website button
-            text: application.isOnQA ? qsTr("Back") : qsTr("Homepage")
-            onClicked: if (!application.isOnQA) Qt.openUrlExternally(qsTr("https://projects.developer.nokia.com/foldergallery"))
-        }
-
-        QKitMenuElement { // goto store button
-            text: qsTr("Nokia Store")
-            onClicked: Qt.openUrlExternally("http://store.ovi.com/content/193179")
-        }
-
-        QKitMenuElement { // exit button
-            text: qsTr("Quit")
-            onClicked: Qt.quit()
         }
     }
 

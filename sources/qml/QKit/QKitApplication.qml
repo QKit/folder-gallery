@@ -2,7 +2,7 @@
 *                                                                              *
 *  Application item implementation.                                            *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -29,6 +29,8 @@ import Qt 4.7
 QKitItem {
     id: application
     objectName: "QKitApplication"
+
+    property string os: "Desktop" // operating system (Desktop, Harmattan, Fremantle, Symbian S60, Symnian^3)
 
     logController: QKitLogController{} // logging settings
     uiController:  QKitUiController{}  // item with UI settings

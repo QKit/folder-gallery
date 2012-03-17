@@ -54,10 +54,13 @@ MediaRoots::MediaRoots(QObject *parent) :
 #else
     imageRoots << QDir::homePath();
 #endif
+    QStringList nameFilders;
+    nameFilders << "*.jpg" << "*.png" << "*.svg" << "*.gif" << "*.bmp";
     foreach (QString imageRoot, imageRoots) {
         if (QDir(imageRoot).isReadable()) {
             MediaDir* newMediaDir = new MediaDir(imageRoot);
             QObject::connect(newMediaDir, SIGNAL(generateThumbnail(QUrl)), &(this->thumbnailDb), SLOT(generateThumbnail(QUrl))); // for thumbnail generation
+            newMediaDir->setNameFilters(nameFilders);
             this->m_list.append(newMediaDir);
         }
     }

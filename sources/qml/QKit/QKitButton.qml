@@ -2,7 +2,7 @@
 *                                                                              *
 *  Button item implementation.                                                 *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -51,38 +51,14 @@ QKitRectangle {
     // other properties
     property Item textItem: buttonTextItem // item with text
     property Item imageItem: buttonImageItem // item with image
-
-    function pressByKey(event) { // press button by particular key
-        if (!active) return // must be active to press
-        local.key = event.key // remember key
-        local.pressed = true // press button
-        focus = true // focus on button to handle key release
-        button.pressed() // press signal
-    }
-
-    signal clicked() // emits when button is clicked
-    signal doubleClicked() // emits when button is double clicked
-    signal entered() // emits when mouse pointer enters button area
-    signal exited() // emits when mouse pointer exits button area
-    signal pressAndHold() // emits when button is pressed for a long time
-    signal pressed() // emits when button is pressed
-    signal pressedChanged() // emits when button pressed state is changes
-    signal released() // emits when button is released
-
-    color: button.backgroundColor
-    border.color: button.borderColor
-    border.width: button.borderWidth
-
-    Item { // local variables
-        id: local
-
+    property Item __local: Item { // local variables
         property bool pressed: false // pressed or not
         property int key // button was pressed by the key
 
         states: [
             State { // on pressed or disabled
                 name: "dimmed"
-                when: local.pressed || buttonMouseArea.pressed || !button.active
+                when: __local.pressed || buttonMouseArea.pressed || !button.active
                 PropertyChanges {
                     target: button
                     color: button.backgroundColorDimmed
@@ -99,7 +75,7 @@ QKitRectangle {
             },
             State { // on selected or focused
                 name: "selected"
-                when: button.active && !local.pressed && (buttonMouseArea.containsMouse || button.selected)
+                when: button.active && !__local.pressed && (buttonMouseArea.containsMouse || button.selected)
                 PropertyChanges {
                     target: button
                     color: button.backgroundColorSelected
@@ -117,6 +93,27 @@ QKitRectangle {
         ]
     }
 
+    signal clicked() // emits when button is clicked
+    signal doubleClicked() // emits when button is double clicked
+    signal entered() // emits when mouse pointer enters button area
+    signal exited() // emits when mouse pointer exits button area
+    signal pressAndHold() // emits when button is pressed for a long time
+    signal pressed() // emits when button is pressed
+    signal pressedChanged() // emits when button pressed state is changes
+    signal released() // emits when button is released
+
+    function pressByKey(event) { // press button by particular key
+        if (!active) return // must be active to press
+        __local.key = event.key // remember key
+        __local.pressed = true // press button
+        focus = true // focus on button to handle key release
+        button.pressed() // press signal
+    }
+
+    color: button.backgroundColor
+    border.color: button.borderColor
+    border.width: button.borderWidth
+
     Row { // button content
         anchors.centerIn: parent
         height: parent.height
@@ -126,6 +123,9 @@ QKitRectangle {
 
             anchors.verticalCenter: parent.verticalCenter
             source: button.imageSource
+//            width: source == "" ? 0 : button.width
+//            height: source == "" ? 0 : button.height
+//            fillMode: Image.PreserveAspectFit
             scale: Math.min(button.height / sourceSize.height, button.width / sourceSize.width)
             smooth: button.smooth
         }
@@ -168,9 +168,9 @@ QKitRectangle {
     Keys.onReleased: {
         if (!active) return // must be active to handle
         switch (event.key) {
-        case local.key: // was pressed by that key
-            local.key = 0 // forget press key
-            local.pressed = false // now not pressed
+        case __local.key: // was pressed by that key
+            __local.key = 0 // forget press key
+            __local.pressed = false // now not pressed
             button.released() // release signal
             button.clicked() // click signal
             break

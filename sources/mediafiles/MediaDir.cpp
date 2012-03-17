@@ -2,7 +2,7 @@
 *                                                                              *
 *  Directory with media files implementation.                                  *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -27,6 +27,7 @@
 #include "MediaDir.h"
 #include "DeclarativeList.h"
 
+
 MediaDir::MediaDir(QString path, QString name, QObject *parent) :
     QObject(parent) {
     if (!path.isNull())
@@ -36,8 +37,20 @@ MediaDir::MediaDir(QString path, QString name, QObject *parent) :
 }
 
 
+MediaDir::~MediaDir() {
+    this->clearDirs();
+    this->clearFiles();
+}
+
+
+QStringList MediaDir::getFileNames() const {
+    if (this->isNull()) return QStringList(); // return empty list if is null
+    return this->m_dir.entryList(QDir::Files | QDir::Readable);
+}
+
+
 QList<MediaFile*> MediaDir::getFiles() {
-    if (this->m_dir.path().isNull()) return QList<MediaFile*>(); // return empty list if is null
+    if (this->isNull()) return QList<MediaFile*>(); // return empty list if is null
     if (this->m_files.isEmpty()) this->refreshFiles(); // recalculate list if wasn't recalculated or really empty
     return this->m_files;
 }
@@ -49,8 +62,14 @@ QDeclarativeListProperty<MediaFile> MediaDir::getFilesProperty() {
 }
 
 
+QStringList MediaDir::getDirNames() const {
+    if (this->isNull()) return QStringList(); // return empty list if is null
+    return this->m_dir.entryList(QStringList(QString("*")), QDir::NoDotAndDotDot | QDir::Dirs | QDir::Readable);
+}
+
+
 QList<MediaDir*> MediaDir::getDirs() {
-    if (this->m_dir.path().isNull()) return QList<MediaDir*>(); // return empty list if is null
+    if (this->isNull()) return QList<MediaDir*>(); // return empty list if is null
     if (this->m_dirs.isEmpty()) this->refreshDirs(); // recalculate list if wasn't recalculated or really empty
     return this->m_dirs;
 }
@@ -70,13 +89,25 @@ void MediaDir::setName(QString name) {
 
 void MediaDir::setPath(QString path) {
     this->m_dir.setPath(path);
-    if (this->m_name.isNull()) // if name isn't set
-        this->setName(this->m_dir.dirName()); // sets system directory name
-    this->m_files.clear(); // clears previos list to recalculate after
-    emit filesChanged();
-    this->m_dirs.clear(); // clears previos list to recalculate after
-    emit dirsChanged();
+    this->setName(this->m_dir.dirName()); // sets system directory name
+    this->clearDirs();
+    this->clearFiles();
     emit sourceChanged();
+}
+
+
+void MediaDir::cdUp() {
+    if (this->isNull()) return;
+    if (this->m_dir.cdUp())
+        this->setPath(this->m_dir.path());
+}
+
+
+void MediaDir::setNameFilters(const QStringList &nameFilters) {
+    this->m_dir.setNameFilters(nameFilters);
+    foreach (MediaDir* subdir, this->m_dirs) subdir->setNameFilters(nameFilters); // set filters for all subdirs
+    emit nameFiltersChanged();
+    this->clearFiles(); // to refresh files
 }
 
 
@@ -93,25 +124,41 @@ void MediaDir::refreshThumbnails(int depth) {
 }
 
 
+void MediaDir::clearFiles() {
+    QList<MediaFile*> oldFiles = this->m_files; // to remove after signal
+    this->m_files.clear(); // clears cache
+    emit filesChanged(); // signal of change
+    foreach (MediaFile* mediaFile, oldFiles) delete mediaFile; // deletes all old
+}
+
+
 void MediaDir::refreshFiles() {
-    this->m_files.clear(); // clears previos list
-    QStringList mediaNames;
-    mediaNames << "*.jpg" << "*.png" << "*.gif" << "*.bmp" << "*.svg";
-    QStringList fileNames = this->m_dir.entryList(mediaNames, QDir::Files | QDir::Readable);
-    foreach (QString fileName, fileNames) { // for all file names
+    QList<MediaFile*> oldFiles = this->m_files; // to remove after signal
+    foreach (QString fileName, this->getFileNames()) { // for all file names
         MediaFile* newMediaFile = new MediaFile(this->m_dir.absoluteFilePath(fileName), this); // media file for path
         QObject::connect(newMediaFile, SIGNAL(generateThumbnail(QUrl)), this, SIGNAL(generateThumbnail(QUrl))); // for thumbnail generation
         this->m_files.append(newMediaFile);
     }
+    foreach (MediaFile* mediaFile, oldFiles) delete mediaFile; // deletes all old
+}
+
+
+void MediaDir::clearDirs() {
+    QList<MediaDir*> oldDirs = this->m_dirs; // to remove after signal
+    this->m_dirs.clear(); // clears cache
+    emit dirsChanged(); // signal of change
+    foreach (MediaDir* mediaDir, oldDirs) delete mediaDir; // deletes all old
 }
 
 
 void MediaDir::refreshDirs() {
-    this->m_dirs.clear(); // clears previos list
-    QStringList dirNames = this->m_dir.entryList(QDir::NoDotAndDotDot | QDir::Dirs | QDir::Readable);
-    foreach (QString dirName, dirNames) { // for all dir names
+    QList<MediaDir*> oldDirs = this->m_dirs; // to remove after signal
+    QStringList nameFilters = this->getNameFilters(); // name filters
+    foreach (QString dirName, this->getDirNames()) { // for all dir names
         MediaDir* newMediaDir = new MediaDir(this->m_dir.absoluteFilePath(dirName));
+        newMediaDir->setNameFilters(nameFilters); // set filters for subdirs
         QObject::connect(newMediaDir, SIGNAL(generateThumbnail(QUrl)), this, SIGNAL(generateThumbnail(QUrl))); // for thumbnail generation
         this->m_dirs.append(newMediaDir);
     }
+    foreach (MediaDir* mediaDir, oldDirs) delete mediaDir; // deletes all old
 }

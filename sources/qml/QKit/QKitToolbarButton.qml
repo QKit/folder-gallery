@@ -2,7 +2,7 @@
 *                                                                              *
 *  Button item for toolbars implementation.                                    *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -30,12 +30,8 @@ QKitButton {
     id: button
     objectName: "QKitToolbarButton"
 
-    function makeLeft() {position.state = "left"}
-    function makeRight() {position.state = "right"}
-
-    anchors.verticalCenter: parent.verticalCenter
-    width: 0.18 * parent.width
-    height: 0.8 * parent.height
+    width: uiController.isDesktopOs ? height : parent.flow === Grid.LeftToRight ? (parent.width - (parent.nChildren - 1) * parent.spacing) / parent.nChildren : parent.width
+    height: parent.flow === Grid.LeftToRight ? parent.height : (parent.height - (parent.nChildren - 1) * parent.spacing) / parent.nChildren
     radius: 0.3 * height
     borderWidth: uiController.toolbarButtonBorderWidth
     smooth: uiController.toolbarButtonSmooth
@@ -51,32 +47,4 @@ QKitButton {
     mouseHoverEnabled: uiController.mouseHoverEnabled // handle mouse hover or not
     // key properties
     pressKey: keyController.toolbarButtonPressKey // key for press
-
-    Item { // position states
-        id: position
-        state: "middle"
-        states: [
-            State {
-                name: "middle"
-                PropertyChanges {
-                    target: button
-                    x: button.parent.width / 2 - button.width / 2
-                }
-            },
-            State {
-                name: "left"
-                PropertyChanges {
-                    target: button
-                    x: 0.01 * button.parent.width
-                }
-            },
-            State {
-                name: "right"
-                PropertyChanges {
-                    target: button
-                    x: 0.99 * button.parent.width - button.width
-                }
-            }
-        ]
-    }
 }

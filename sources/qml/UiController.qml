@@ -2,7 +2,7 @@
 *                                                                              *
 *  UiController item implementation.                                           *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -30,5 +30,5 @@ QKitUiController {
     pageTexture: "images/alder_pre.jpg"
 //    thumbnailAsynchronous: false
     thumbnailBorderColor: "#90000000"
-    thumbnailBackgroundColor: "#50000000"
+    thumbnailBackgroundColor: "#7F000000"
 }

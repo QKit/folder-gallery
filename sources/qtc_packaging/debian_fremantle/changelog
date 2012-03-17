@@ -1,3 +1,14 @@
+foldergallery (1.9.1) stable; urgency=low
+
+  * QKit 0.6.0.
+  * Bugfixes.
+  * No thumbnail rotations.
+  * External urls fix.
+  * Transparent toolbar.
+
+-- Kirill Chuvilin <kirill.chuvilin@gmail.com> Sat, 17 Mar 2012 00:26:00 +0400
+
+
 foldergallery (1.8.5) stable; urgency=low
 
   * Interface responsiveness improving.

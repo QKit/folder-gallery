@@ -2,7 +2,7 @@
 *                                                                              *
 *  Page with image view implementation.                                        *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -37,8 +37,10 @@ QKitPage {
     Keys.onRightPressed: viewPageViewer.incrementCurrentIndex()
     Keys.onLeftPressed: viewPageViewer.decrementCurrentIndex()
     toolbar: QKitToolbar {
-        leftButton: QKitToolbarBackButton { onClicked: viewPage.backToggled() }
-        rightButton: QKitToolbarMenuButton { onClicked: viewPage.menuToggled() }
+        color: "#00000000"
+        borderColor: "#00000000"
+        QKitToolbarBackButton { onClicked: viewPage.backToggled() }
+        QKitToolbarMenuButton { onClicked: viewPage.menuToggled() }
     }
 
     ListView {

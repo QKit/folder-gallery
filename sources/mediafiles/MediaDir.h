@@ -2,7 +2,7 @@
 *                                                                              *
 *  Directory with media files implementation.                                  *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -41,11 +41,15 @@ class MediaDir : public QObject {
 
     Q_PROPERTY(bool isNull READ isNull NOTIFY sourceChanged) //!< indicates that dir is null dir
     Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged) //!< name of directory
+    Q_PROPERTY(QString path READ getPath WRITE setPath NOTIFY sourceChanged) //!< path to directory
     Q_PROPERTY(QUrl source READ getSource WRITE setSource NOTIFY sourceChanged) //!< path to directory
     Q_PROPERTY(int filesCount READ getFilesCount NOTIFY filesChanged) //!< number of files
+    Q_PROPERTY(QStringList fileNames READ getFileNames NOTIFY filesChanged) //!< file names
     Q_PROPERTY(QDeclarativeListProperty<MediaFile> files READ getFilesProperty NOTIFY filesChanged) //!< files
     Q_PROPERTY(int dirsCount READ getDirsCount NOTIFY dirsChanged) //!< number of subdirs
+    Q_PROPERTY(QStringList dirNames READ getDirNames NOTIFY dirsChanged) //!< subdir names
     Q_PROPERTY(QDeclarativeListProperty<MediaDir> dirs READ getDirsProperty NOTIFY dirsChanged) //!< subdirs
+    Q_PROPERTY(QStringList nameFilters READ getNameFilters WRITE setNameFilters NOTIFY nameFiltersChanged) //!< file name filters
 
 public:
     /*!
@@ -54,13 +58,18 @@ public:
      * \param name   string with name of directory to show (leave null to set automatically)
      * \param parent parent object
      */
-    explicit MediaDir(QString path = QString::null, QString name = QString::null, QObject *parent = 0);
+    explicit MediaDir(QString path = QDir::homePath(), QString name = QString::null, QObject *parent = 0);
+
+    /*!
+     * \brief Destructor.
+     */
+    ~MediaDir();
 
     /*!
      * \brief Indicates null dir or not.
      * \return true if dir path is null, otherwise false
      */
-    bool isNull() {return this->m_dir.path().isNull();}
+    bool isNull() const {return this->m_dir.path().isEmpty();}
 
     /*!
      * \brief Returns name of directory.
@@ -87,6 +96,12 @@ public:
     int getFilesCount() {return this->getFiles().count();}
 
     /*!
+     * \brief Returns file names.
+     * \return list with names of files
+     */
+    QStringList getFileNames() const;
+
+    /*!
      * \brief Returns files.
      * \return list with pointers to files
      */
@@ -105,6 +120,12 @@ public:
     int getDirsCount() {return this->getDirs().count();}
 
     /*!
+     * \brief Returns subdir names.
+     * \return list with names of subdirs
+     */
+    QStringList getDirNames() const;
+
+    /*!
      * \brief Returns subdirs.
      * \return list with pointers to subdirs
      */
@@ -115,6 +136,12 @@ public:
      * \return list property with subdirs
      */
     QDeclarativeListProperty<MediaDir> getDirsProperty();
+
+    /*!
+     * \brief Returns file name filters.
+     * \return list with masks of file names
+     */
+    QStringList getNameFilters() const {return this->m_dir.nameFilters();}
 
 public slots:
     /*!
@@ -130,10 +157,21 @@ public slots:
     void setPath(QString path);
 
     /*!
+     * \brief Sets path to directory one level up.
+     */
+    void cdUp();
+
+    /*!
      * \brief Sets url to directory.
      * \param source source url
      */
     void setSource(QUrl source) {this->setPath(source.toLocalFile());}
+
+    /*!
+     * \brief Sets file name filters.
+     * \param list with masks of file names
+     */
+    void setNameFilters(const QStringList &nameFilters);
 
     /*!
      * \brief Recalculates thumbnails of files and subfolders.
@@ -163,6 +201,11 @@ signals:
     void dirsChanged();
 
     /*!
+     * \brief Emited when file names filters changed.
+     */
+    void nameFiltersChanged();
+
+    /*!
      * \brief Emited when new thumbnail is needed.
      * \param source url to file source
      */
@@ -171,17 +214,27 @@ signals:
 private:
     QString m_name;  //!< name of directory
     QDir m_dir; //!< directory object
-    QList<MediaFile*> m_files; //!< files
-    QList<MediaDir*> m_dirs; //!< dirs
+    QList<MediaFile*> m_files; //!< pointers to files
+    QList<MediaDir*> m_dirs; //!< pointers to dirs
 
 private slots:
     /*!
-     * \brief Recalculates file list.
+     * \brief Clears files list.
+     */
+    void clearFiles();
+
+    /*!
+     * \brief Recalculates files list.
      */
     void refreshFiles();
 
     /*!
-     * \brief Recalculates dir list.
+     * \brief Clears dirs list.
+     */
+    void clearDirs();
+
+    /*!
+     * \brief Recalculates dirs list.
      */
     void refreshDirs();
 };

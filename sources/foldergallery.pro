@@ -13,7 +13,7 @@ QML_IMPORT_PATH =
 # 0x2002CCCF value if protected UID is given to the application
 #symbian:DEPLOYMENT.installer_header = 0x2002CCCF
 
-VERSION = 1.8.5
+VERSION = 1.9.0
 
 symbian {
     TARGET.UID3 = 0x2004a654
@@ -73,16 +73,5 @@ OTHER_FILES += \
     foldergallery64.png \
     foldergallery_harmattan.desktop \
     foldergallery80.png \
-    qtc_packaging/debian_harmattan/rules \
-    qtc_packaging/debian_harmattan/README \
-    qtc_packaging/debian_harmattan/manifest.aegis \
-    qtc_packaging/debian_harmattan/copyright \
-    qtc_packaging/debian_harmattan/control \
-    qtc_packaging/debian_harmattan/compat \
-    qtc_packaging/debian_harmattan/changelog \
-    qtc_packaging/debian_fremantle/rules \
-    qtc_packaging/debian_fremantle/README \
-    qtc_packaging/debian_fremantle/copyright \
-    qtc_packaging/debian_fremantle/control \
-    qtc_packaging/debian_fremantle/compat \
-    qtc_packaging/debian_fremantle/changelog
+    qtc_packaging/debian_harmattan/* \
+    qtc_packaging/debian_fremantle/*

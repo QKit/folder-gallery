@@ -2,7 +2,7 @@
 *                                                                              *
 *  Main item adaptor for Harmattan implementation.                             *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -29,7 +29,9 @@ import "QKit"
 
 Window {
     Main {
+        id: application
         anchors.fill: parent
+        os: "Harmattan"
         uiController: UiController {
             mouseHoverEnabled: false
             buttonSmooth: true

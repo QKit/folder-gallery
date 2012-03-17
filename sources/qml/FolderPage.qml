@@ -2,7 +2,7 @@
 *                                                                              *
 *  Page with folder images implementation.                                     *
 *                                                                              *
-*  Copyright (C) 2011 Kirill Chuvilin.                                         *
+*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -38,16 +38,15 @@ QKitPage {
     signal viewFolderToggled(variant dir, int index) // goto folder page
 
     toolbar: QKitToolbar {
-        leftButton: QKitToolbarBackButton { onClicked: folderPage.backToggled() }
-        rightButton: QKitToolbarMenuButton { onClicked: folderPage.menuToggled() }
+        color: "#00000000"
+        borderColor: "#00000000"
+        QKitToolbarBackButton { onClicked: folderPage.backToggled() }
+        QKitToolbarMenuButton { onClicked: folderPage.menuToggled() }
     }
 
     FolderView {
         id: folderView
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.toolbar.top
+        anchors.fill: parent
         dirs: folderPage.dir.dirs
         files: folderPage.dir.files
         onFolderClicked: folderPage.viewFolderToggled(dir, index)
