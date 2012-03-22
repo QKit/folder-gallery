@@ -1,8 +1,8 @@
 /*******************************************************************************
 *                                                                              *
-*  Delegete for ListView implementation.                                       *
+*  PinchArea item implementation.                                              *
 *                                                                              *
-*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
+*  Copyright (C) 2012 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -24,9 +24,24 @@
 *                                                                              *
 *******************************************************************************/
 
-import Qt 4.7
+import QtQuick 1.1
 
-QKitItem {
-    objectName: "QKitListViewDelegate"
-    controllerSource: ListView.view
+PinchArea {
+    id: item
+    objectName: "QKitPinchArea"
+    // controllers
+    property Item controllerSource: parent // source of controller items
+    property Item logController: controllerSource.logController // logging settings
+    property Item uiController:  controllerSource.uiController  // item with UI settings
+    property Item keyController: controllerSource.keyController // item with key settings
+    property Item navController: controllerSource.navController // key navigation controllerler
+    // QKit properties
+    property bool selected: activeFocus // selected or not
+    // logging
+    Component.onCompleted: if (logController && logController.createdLogging) console.log(item.objectName + " - created")
+    onActiveFocusChanged: if (logController && logController.activeFocusLogging) console.log(item.objectName + " - activeFocus changed to " + activeFocus)
+    onEnabledChanged: if (logController && logController.enabledLogging) console.log(item.objectName + " - enabled changed to " + enabled)
+    onFocusChanged: if (logController && logController.focusLogging) console.log(item.objectName + " - focus changed to " + focus)
+    onParentChanged: if (logController && logController.parentLogging) console.log(item.objectName + " - parent changed to " + (item.parent ? item.parent.objectName : "[NULL]"))
+    onSelectedChanged: if (logController && logController.selectedLogging) console.log(item.objectName + " - selected changed to " + selected)
 }

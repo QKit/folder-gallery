@@ -1,8 +1,8 @@
 /*******************************************************************************
 *                                                                              *
-*  Column item implementation.                                                 *
+*  MouseArea item implementation.                                              *
 *                                                                              *
-*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
+*  Copyright (C) 2012 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -26,9 +26,9 @@
 
 import Qt 4.7
 
-Column {
+MouseArea {
     id: item
-    objectName: "QKitColumn"
+    objectName: "QKitMouseArea"
     // controllers
     property Item controllerSource: parent // source of controller items
     property Item logController: controllerSource.logController // logging settings

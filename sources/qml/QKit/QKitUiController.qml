@@ -29,6 +29,7 @@ import Qt 4.7
 Item {
     property string os: application.os // operating system (Desktop, Harmattan, Fremantle, Symbian S60, Symnian^3)
     property bool isDesktopOs: os == "Desktop" // operating system
+    property bool isMultitouch: (os == "Harmattan") || (os == "Symbian^3") // multitouch test
     property string orientation: application.width > application.height ? "Landscape" : "Portrait" // orientation
     property bool isLandscapeOrientation: orientation == "Landscape" // orientation
     property bool isPortraitOrientation: orientation == "Portrait" // orientation

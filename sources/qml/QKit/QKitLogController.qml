@@ -27,10 +27,10 @@
 import Qt 4.7
 
 Item {
-    property bool createdLogging: false
-    property bool parentLogging: false
-    property bool activeLogging: false
-    property bool selectedLogging: false
     property bool activeFocusLogging: false
+    property bool createdLogging: false
+    property bool enabledLogging: false
     property bool focusLogging: false
+    property bool parentLogging: false
+    property bool selectedLogging: false
 }

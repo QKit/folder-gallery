@@ -37,52 +37,69 @@ QKitPage {
     Keys.onRightPressed: viewPageViewer.incrementCurrentIndex()
     Keys.onLeftPressed: viewPageViewer.decrementCurrentIndex()
     toolbar: QKitToolbar {
-        color: "#00000000"
-        borderColor: "#00000000"
+//        color: "#00000000"
+//        borderColor: "#00000000"
         QKitToolbarBackButton { onClicked: viewPage.backToggled() }
         QKitToolbarMenuButton { onClicked: viewPage.menuToggled() }
     }
 
-    ListView {
+    QKitListView {
         id: viewPageViewer
 
-        visible: !flick.visible
         anchors.fill: parent
         orientation: "Horizontal"
         snapMode: "SnapOneItem"
         highlightMoveDuration: 0
         highlightMoveSpeed: -1
         highlightRangeMode: ListView.StrictlyEnforceRange // to change currentIndex on moving
-        onCurrentItemChanged: flick.zoom = 1
         delegate: Item {
             id: fileViewer
 
+            property bool isCurrent: index === viewPageViewer.currentIndex
             property url source: viewPage.files[index].source
             property url thumbnail: viewPage.files[index].thumbnail
             property variant imageSize: viewPage.files[index].previewSize
             property real resizeScale: Math.min(1, width / imageSize.width, height / imageSize.height)
             property int imageWidth: imageSize.width * resizeScale
             property int imageHeight: imageSize.height * resizeScale
+            property alias image: imagePreview
+
+            function resetImage() {
+                image.scale = 1;
+                image.rotation = 0;
+                image.x = (width - imageWidth) / 2
+                image.y = (height - imageHeight) / 2
+            }
 
             width:  viewPage.width
             height:  viewPage.height
+
+            onWidthChanged: resetImage()
+            onHeightChanged: resetImage()
+            onIsCurrentChanged: if (!isCurrent) resetImage()
+            Component.onCompleted: resetImage()
 
             Image { // to view while preview loading
                 id: imageThumbnail
 
                 visible: imagePreview.status != Image.Ready
-                anchors.centerIn: parent
+//                visible: imagePreview.status != Image.Ready && !imageZoomed.visible
                 width: imageWidth
                 height: imageHeight
                 source: fileViewer.thumbnail
                 fillMode: Image.PreserveAspectFit
                 asynchronous: false
                 smooth: true
+
+                scale: imagePreview.scale
+                rotation: imagePreview.rotation
+                x: imagePreview.x
+                y: imagePreview.y
             }
             Image { // to view on none zoom
                 id: imagePreview
 
-                anchors.centerIn: parent
+//                visible: !imageZoomed.visible
                 width: imageWidth
                 height: imageHeight
                 sourceSize.width: fileViewer.width // Math.min(400, fileViewer.width)
@@ -96,107 +113,22 @@ QKitPage {
 
         MouseArea { // for toolbar removing
             anchors.fill: parent
-            onClicked: viewPage.toolbar.active = !viewPage.toolbar.active // reactivate toolbar
+            onClicked: viewPage.toolbar.enabled = !viewPage.toolbar.enabled // reactivate toolbar
         }
     }
 
-    Flickable {
-        id: flick
+    QKitDragArea {
+        id: dragArea
 
-        property real zoom: 1
-
-        function fixContentX() {
-            if (contentWidth < width) {
-                contentX = - (width - contentWidth) / 2
-            } else if (contentX < 0) {
-                contentX = 0
-            } else if (contentX > contentWidth - width) {
-                contentX = contentWidth - width
-            }
-        }
-        function fixContentY() {
-            if (contentHeight < height) {
-                contentY = - (height - contentHeight) / 2
-            } else if (contentY < 0) {
-                contentY = 0
-            } else if (contentY > contentHeight - height) {
-                contentY = contentHeight - height
-            }
-        }
-        function zoomContent() {
-            if (zoom != 1) {
-                imageZoomed.scale = imageZoomed.minScale * flick.zoom
-            }
-        }
-
-        visible: (imageZoomed.status == Image.Ready) &&  (flick.zoom !== 1)
+        parent: viewPage
         anchors.fill: parent
-        z: 2
-        contentWidth: imageZoomed.width * imageZoomed.scale
-        contentHeight: imageZoomed.height * imageZoomed.scale
-        onZoomChanged: {
-            if (zoom < 1)
-                zoom = 1 // minimum zoom
-            else if (zoom > 4)
-                zoom = 4 // maximum zoom
-        }
-        onVisibleChanged: {
-            viewPage.toolbar.visible = !visible
-            if (visible) { // start of zooming
-                imageZoomed.minScale = Math.min(1, viewPage.width / imageZoomed.width, viewPage.height / imageZoomed.height)
-                imageZoomed.scale = imageZoomed.minScale * flick.zoom
-                flick.contentX = - (flick.width - flick.contentWidth) / 2
-                flick.contentY = - (flick.height - flick.contentHeight) / 2
-            }
-        }
-        onWidthChanged: fixContentX()
-        onHeightChanged: fixContentY()
-        onContentXChanged: fixContentX()
-        onContentYChanged: fixContentY()
-        onContentWidthChanged: fixContentX()
-        onContentHeightChanged: fixContentY()
-
-        Image { // to view full image on zoom
-            id: imageZoomed
-
-            property real minScale: 1
-
-            anchors.centerIn: parent
-            sourceSize.width: flick.width * 2
-            sourceSize.height: flick.height * 2
-            source: flick.zoom == 1 ? "" : "image://preview/" + viewPageViewer.currentItem.source
-            smooth: uiController.thumbnailSmooth
-            asynchronous: true
-        }
-    }
-
-    QKitDialogButton { // zoom in button
-        width: 0.06 * Math.max(parent.height, parent.width)
-        height: width
-        z: 3
-        anchors.right: parent.right
-        anchors.rightMargin: 0.2 * width
-        anchors.bottom: parent.verticalCenter
-        anchors.bottomMargin: 0.2 * height
-        imageSource: "images/icon-m-camera-zoom-in.svg"
-        onClicked: {
-            flick.zoom += 0.2
-            flick.zoomContent()
-        }
-    }
-
-    QKitDialogButton { // zoom out button
-        width: 0.06 * Math.max(parent.height, parent.width)
-        height: width
-        z: 3
-        anchors.right: parent.right
-        anchors.rightMargin: 0.2 * width
-        anchors.top: parent.verticalCenter
-        anchors.topMargin: 0.2 * height
-        imageSource: "images/icon-m-camera-zoom-out.svg"
-        onClicked: {
-            flick.zoom -= 0.2
-            flick.zoomContent()
-        }
+        anchors.leftMargin: parent.width / 5
+        anchors.rightMargin: parent.width / 5
+        drag.target: viewPageViewer.currentItem ? viewPageViewer.currentItem.image : null
+        drag.minimumScale: 0.2
+        drag.maximumScale: 5
+        drag.minimumRotation: -18000
+        drag.maximumRotation: 18000
+        drag.axis: (drag.target == null || drag.target.scale == 1 || drag.target.rotation == 0 ? 0 : Drag.XandYAxis)
     }
 }

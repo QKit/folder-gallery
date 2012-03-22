@@ -1,4 +1,4 @@
-Source: foldergallery
+Source: folder-gallery
 Section: user/hidden
 Priority: optional
 Maintainer: Kirill Chuvilin <kirill.chuvilin@gmail.com>
@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 5), libqt4-dev
 Standards-Version: 3.7.3
 Homepage: http://MaemoWorld.ru/wiki/index.php?title=Folder_Gallery
 
-Package: foldergallery
+Package: folder-gallery
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Image viewer, based on folder structure.

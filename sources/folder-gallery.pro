@@ -13,7 +13,7 @@ QML_IMPORT_PATH =
 # 0x2002CCCF value if protected UID is given to the application
 #symbian:DEPLOYMENT.installer_header = 0x2002CCCF
 
-VERSION = 1.9.0
+VERSION = 1.10.2
 
 symbian {
     TARGET.UID3 = 0x2004a654
@@ -24,18 +24,22 @@ symbian {
 }
 
 maemo5 {
-    target.path = /opt/foldergallery/bin
-    INSTALLS += target
-}
-
-contains(MEEGO_EDITION,harmattan) {
-    DEFINES += Q_WS_HARMATTAN # definition for harmattan
-    target.path = /opt/foldergallery/bin
+    target.path = /opt/folder-gallery/bin
     INSTALLS += target
     # enable booster
     QMAKE_CXXFLAGS += -fPIC -fvisibility=hidden -fvisibility-inlines-hidden
     QMAKE_LFLAGS += -pie -rdynamic
 }
+
+contains(MEEGO_EDITION,harmattan) {
+    DEFINES += Q_WS_HARMATTAN # definition for harmattan
+    target.path = /opt/folder-gallery/bin
+    INSTALLS += target
+    # enable booster
+    QMAKE_CXXFLAGS += -fPIC -fvisibility=hidden -fvisibility-inlines-hidden
+    QMAKE_LFLAGS += -pie -rdynamic
+}
+
 
 # enable booster
 CONFIG += qdeclarative-boostable
@@ -68,10 +72,10 @@ SOURCES += main.cpp \
     mediafiles/MediaPreviewImageProvider.cpp
 
 OTHER_FILES += \
-    foldergallery.svg \
-    foldergallery.desktop \
-    foldergallery64.png \
-    foldergallery_harmattan.desktop \
-    foldergallery80.png \
+    folder-gallery.svg \
+    folder-gallery.desktop \
+    folder-gallery64.png \
+    folder-gallery_harmattan.desktop \
+    folder-gallery80.png \
     qtc_packaging/debian_harmattan/* \
     qtc_packaging/debian_fremantle/*

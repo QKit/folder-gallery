@@ -1,8 +1,8 @@
 /*******************************************************************************
 *                                                                              *
-*  Delegete for GridView implementation.                                       *
+*  Drag item implementation.                                                   *
 *                                                                              *
-*  Copyright (C) 2011-2012 Kirill Chuvilin.                                    *
+*  Copyright (C) 2012 Kirill Chuvilin.                                         *
 *  All rights reserved.                                                        *
 *  Contact: Kirill Chuvilin (kirill.chuvilin@gmail.com, kirik-ch.ru)           *
 *                                                                              *
@@ -24,9 +24,20 @@
 *                                                                              *
 *******************************************************************************/
 
+
 import Qt 4.7
 
-QKitItem {
-    objectName: "QKitGridViewDelegate"
-    controllerSource: GridView.view
+
+QtObject { // transformation params group
+    property Item target: null // id of the item to drag
+    property bool active: false // if the target item is currently being dragged
+    property real minimumScale: 1 // minimum of the Item::scale property
+    property real maximumScale: 1 // maximum of the Item::scale property
+    property real minimumRotation: 0 // minimum of the Item::rotation property
+    property real maximumRotation: 0 // maximum of the Item::rotation property
+    property int axis: 0 // dragging direction (Drag.XAxis, Drag.YAxis, Drag.XandYAxis, 0)
+    property real minimumX: -3.4028234663852886e+38 // minimum limit how far the target can be dragged horizontally
+    property real maximumX: 3.4028234663852886e+38 // maximum limit how far the target can be dragged horizontally
+    property real minimumY: -3.4028234663852886e+38 // minimum limit how far the target can be dragged vertically
+    property real maximumY: 3.4028234663852886e+38 // maximum limit how far the target can be dragged vertically
 }

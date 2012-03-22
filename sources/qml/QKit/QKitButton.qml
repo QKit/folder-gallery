@@ -51,47 +51,6 @@ QKitRectangle {
     // other properties
     property Item textItem: buttonTextItem // item with text
     property Item imageItem: buttonImageItem // item with image
-    property Item __local: Item { // local variables
-        property bool pressed: false // pressed or not
-        property int key // button was pressed by the key
-
-        states: [
-            State { // on pressed or disabled
-                name: "dimmed"
-                when: __local.pressed || buttonMouseArea.pressed || !button.active
-                PropertyChanges {
-                    target: button
-                    color: button.backgroundColorDimmed
-                    border.color: button.borderColorDimmed
-                }
-                PropertyChanges {
-                    target: buttonTextItem
-                    color: button.textColorDimmed
-                }
-                PropertyChanges {
-                    target: buttonImageItem
-                    source: button.imageSourceDimmed
-                }
-            },
-            State { // on selected or focused
-                name: "selected"
-                when: button.active && !__local.pressed && (buttonMouseArea.containsMouse || button.selected)
-                PropertyChanges {
-                    target: button
-                    color: button.backgroundColorSelected
-                    borderColor: button.borderColorSelected
-                }
-                PropertyChanges {
-                    target: buttonTextItem
-                    color: button.textColorSelected
-                }
-                PropertyChanges {
-                    target: buttonImageItem
-                    source: button.imageSourceSelected
-                }
-            }
-        ]
-    }
 
     signal clicked() // emits when button is clicked
     signal doubleClicked() // emits when button is double clicked
@@ -103,9 +62,9 @@ QKitRectangle {
     signal released() // emits when button is released
 
     function pressByKey(event) { // press button by particular key
-        if (!active) return // must be active to press
-        __local.key = event.key // remember key
-        __local.pressed = true // press button
+        if (!enabled) return // must be enabled to press
+        local.key = event.key // remember key
+        local.pressed = true // press button
         focus = true // focus on button to handle key release
         button.pressed() // press signal
     }
@@ -113,6 +72,51 @@ QKitRectangle {
     color: button.backgroundColor
     border.color: button.borderColor
     border.width: button.borderWidth
+    resources: [
+        Item { // local variables
+            id: local
+
+            property bool pressed: false // pressed or not
+            property int key // button was pressed by the key
+
+            states: [
+                State { // on pressed or disabled
+                    name: "dimmed"
+                    when: local.pressed || buttonMouseArea.pressed || !button.enabled
+                    PropertyChanges {
+                        target: button
+                        color: button.backgroundColorDimmed
+                        border.color: button.borderColorDimmed
+                    }
+                    PropertyChanges {
+                        target: buttonTextItem
+                        color: button.textColorDimmed
+                    }
+                    PropertyChanges {
+                        target: buttonImageItem
+                        source: button.imageSourceDimmed
+                    }
+                },
+                State { // on selected or focused
+                    name: "selected"
+                    when: button.enabled && !local.pressed && (buttonMouseArea.containsMouse || button.selected)
+                    PropertyChanges {
+                        target: button
+                        color: button.backgroundColorSelected
+                        borderColor: button.borderColorSelected
+                    }
+                    PropertyChanges {
+                        target: buttonTextItem
+                        color: button.textColorSelected
+                    }
+                    PropertyChanges {
+                        target: buttonImageItem
+                        source: button.imageSourceSelected
+                    }
+                }
+            ]
+        }
+    ]
 
     Row { // button content
         anchors.centerIn: parent
@@ -144,18 +148,17 @@ QKitRectangle {
 
         anchors.fill: button
         hoverEnabled: button.mouseHoverEnabled // handle mouse hover or not
-        onClicked: if (active) button.clicked()
-        onDoubleClicked: if (active) button.doubleClicked()
-        onEntered: if (active) button.entered()
-        onExited: if (active) button.exited()
-        onPressAndHold: if (active) button.pressAndHold()
-        onPressed: if (active) button.pressed()
-        onPressedChanged: if (active) button.pressedChanged()
-        onReleased: if (active) button.released()
+        onClicked: button.clicked()
+        onDoubleClicked: button.doubleClicked()
+        onEntered: button.entered()
+        onExited:  button.exited()
+        onPressAndHold: button.pressAndHold()
+        onPressed: button.pressed()
+        onPressedChanged: button.pressedChanged()
+        onReleased: button.released()
     }
 
     Keys.onPressed: {
-        if (!active) return // must be active to handle
         switch (event.key) {
         case button.pressKey:
             button.pressByKey(event)
@@ -166,11 +169,10 @@ QKitRectangle {
         event.accepted = true
     }
     Keys.onReleased: {
-        if (!active) return // must be active to handle
         switch (event.key) {
-        case __local.key: // was pressed by that key
-            __local.key = 0 // forget press key
-            __local.pressed = false // now not pressed
+        case local.key: // was pressed by that key
+            local.key = 0 // forget press key
+            local.pressed = false // now not pressed
             button.released() // release signal
             button.clicked() // click signal
             break

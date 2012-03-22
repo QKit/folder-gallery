@@ -55,7 +55,7 @@ QKitItem {
         states: [
             State { // on selected or focused
                 name: "selected"
-                when: thumbnail.active && thumbnail.selected
+                when: thumbnail.enabled && thumbnail.selected
                 PropertyChanges {
                     target: thumbnailBackground
                     color: thumbnail.backgroundColorSelected

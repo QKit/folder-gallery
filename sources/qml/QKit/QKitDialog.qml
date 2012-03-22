@@ -41,8 +41,8 @@ QKitItem {
     signal opened() // emits on dialog open
     signal closed() // emits on dialog close
 
-    active: false // initially closed
-    visible: active // visible only if active
+    enabled: false // initially closed
+    visible: enabled // visible only if enabled
     anchors.fill: parent // fill parent when opened
     z: 1 // to view ower other
 
@@ -81,11 +81,11 @@ QKitItem {
 
     MouseArea { // for out of bar click test
         anchors.fill: parent
-        onClicked: dialog.active = false // if clicked, then out of dialog element and dialog must be closed
+        onClicked: dialog.enabled = false // if clicked, then out of dialog element and dialog must be closed
     }
 
-    onActiveChanged: {
-        if (active) {
+    onEnabledChanged: {
+        if (enabled) {
             contentItem.forceActiveFocus()
             dialog.opened()
         } else
@@ -96,7 +96,7 @@ QKitItem {
     Keys.onPressed: {
         switch (event.key) {
         case closeKey:
-            active = false
+            enabled = false
             break
         }
         event.accepted = true

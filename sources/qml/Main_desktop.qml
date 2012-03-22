@@ -31,8 +31,7 @@ Main {
     id: application
     width: 854
     height: 480
-    os: "Harmattan"
-//    os: "Desktop"
+    os: "Desktop"
     uiController: UiController {
         mouseHoverEnabled: true
         buttonSmooth: true

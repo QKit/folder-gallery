@@ -36,8 +36,8 @@ QKitPage {
     property alias currentIndex: folderView.currentIndex
 
     toolbar: QKitToolbar {
-        color: "#00000000"
-        borderColor: "#00000000"
+//        color: "#00000000"
+//        borderColor: "#00000000"
         QKitToolbarMenuButton { onClicked: homePage.menuToggled() }
     }
 

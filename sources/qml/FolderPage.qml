@@ -38,8 +38,8 @@ QKitPage {
     signal viewFolderToggled(variant dir, int index) // goto folder page
 
     toolbar: QKitToolbar {
-        color: "#00000000"
-        borderColor: "#00000000"
+//        color: "#00000000"
+//        borderColor: "#00000000"
         QKitToolbarBackButton { onClicked: folderPage.backToggled() }
         QKitToolbarMenuButton { onClicked: folderPage.menuToggled() }
     }

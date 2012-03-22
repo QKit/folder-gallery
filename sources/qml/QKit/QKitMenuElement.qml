@@ -35,5 +35,5 @@ QKitDialogButton {
     controllerSource: __menuItem
     width: __menuItem.elementWidth
     height: __menuItem.elementHeight
-    onClicked: __menuItem.active = false // to close menu after click on item
+    onClicked: __menuItem.enabled = false // to close menu after click on item
 }

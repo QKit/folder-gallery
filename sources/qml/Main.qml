@@ -35,7 +35,7 @@ QKitApplication {
     property MediaRoots mediaRoots: MediaRoots {}
 
     property bool isForStore: false
-    property string version: "1.9.1"
+    property string version: "1.10.2"
 
     function externalUrl(link) {
         return "http://scripts.kirik-ch.ru/appredirect.php?app=folder-gallery&link=" + link +"&platform=" + os + "&version=" + version + (isForStore ? "&isforstore=true" : "");
@@ -51,7 +51,7 @@ QKitApplication {
             folderPage.dir = dir
             application.state = "folder"
         }
-        onMenuToggled: menu.active = true
+        onMenuToggled: menu.enabled = true
     }
 
     FolderPage { // page with images in particular folder
@@ -76,14 +76,14 @@ QKitApplication {
             viewPage.iCurrentFile = index
             application.state = "view"
         }
-        onMenuToggled: menu.active = true
+        onMenuToggled: menu.enabled = true
     }
 
     ViewPage { // page with image view
         id: viewPage
         objectName: "ViewPage"
         onBackToggled: application.state = "folder"
-        onMenuToggled: menu.active = true
+        onMenuToggled: menu.enabled = true
     }
 
     Menu {

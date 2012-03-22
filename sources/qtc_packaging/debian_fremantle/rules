@@ -28,7 +28,7 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	# $(MAKE) # Uncomment this line for use without Qt Creator
-	#docbook-to-man debian/foldergallery.sgml > foldergallery.1
+	#docbook-to-man debian/folder-gallery.sgml > folder-gallery.1
 
 	touch $@
 
@@ -48,8 +48,8 @@ install: build
 	dh_clean -k 
 	dh_installdirs
 
-	# Add here commands to install the package into debian/foldergallery.
-	$(MAKE) INSTALL_ROOT="$(CURDIR)"/debian/foldergallery install
+	# Add here commands to install the package into debian/folder-gallery.
+	$(MAKE) INSTALL_ROOT="$(CURDIR)"/debian/folder-gallery install
 
 
 # Build architecture-independent files here.

@@ -55,7 +55,7 @@ QKitNavGridView {
         model = newModel;
     }
 
-    cellWidth: Math.min(width / Math.round(width / 180 + 0.5) - 0.5, 0.49 * width)
+    cellWidth: Math.min(width / Math.round(width / 190 + 0.5) - 0.5, 0.49 * width)
     cellHeight: 1.2 * cellWidth
     keyNavigationWraps: false
     onFilesChanged: refreshModel()
